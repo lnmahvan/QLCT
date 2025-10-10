@@ -14,7 +14,9 @@ class StatisticsScreen extends StatefulWidget {
 class _StatisticsScreenState extends State<StatisticsScreen> {
   String _filter = 'all';
   String _searchText = '';
-  String _selectedChartType = 'expense'; // 👈 mặc định hiện biểu đồ chi
+  String _selectedChartType = 'expense'; // income | expense
+  DateTimeRange? _customRange;
+
   final _searchController = TextEditingController();
 
   @override
@@ -25,16 +27,22 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
     final now = DateTime.now();
 
-    // lọc theo bộ lọc thời gian
+    // Lọc theo thời gian
     final filtered = expense.transactions.where((t) {
-      final matchFilter = _filter == 'all' ||
-          (_filter == 'today' &&
-              t.date.day == now.day &&
-              t.date.month == now.month &&
-              t.date.year == now.year) ||
-          (_filter == 'month' &&
-              t.date.month == now.month &&
-              t.date.year == now.year);
+      bool matchFilter = false;
+
+      if (_filter == 'all') {
+        matchFilter = true;
+      } else if (_filter == 'today') {
+        matchFilter = t.date.day == now.day &&
+            t.date.month == now.month &&
+            t.date.year == now.year;
+      } else if (_filter == 'month') {
+        matchFilter = t.date.month == now.month && t.date.year == now.year;
+      } else if (_filter == 'custom' && _customRange != null) {
+        matchFilter = t.date.isAfter(_customRange!.start.subtract(const Duration(days: 1))) &&
+                      t.date.isBefore(_customRange!.end.add(const Duration(days: 1)));
+      }
 
       final matchSearch = t.note.toLowerCase().contains(_searchText) ||
           t.category.toLowerCase().contains(_searchText);
@@ -42,11 +50,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       return matchFilter && matchSearch;
     }).toList();
 
-    // nhóm thu và chi riêng
-    final Map<String, double> categoryExpense = {};
+    // Gom nhóm
     final Map<String, double> categoryIncome = {};
-    double totalExpense = 0;
+    final Map<String, double> categoryExpense = {};
     double totalIncome = 0;
+    double totalExpense = 0;
 
     for (var t in filtered) {
       if (t.type == 'income') {
@@ -60,15 +68,14 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       }
     }
 
-    // chọn dataset biểu đồ
-    final Map<String, double> currentCategoryMap =
+    final currentCategory =
         _selectedChartType == 'income' ? categoryIncome : categoryExpense;
-    final double currentTotal =
+    final currentTotal =
         _selectedChartType == 'income' ? totalIncome : totalExpense;
 
-    // tạo phần PieChart
+    // Tạo biểu đồ
     final pieSections = <PieChartSectionData>[];
-    currentCategoryMap.forEach((category, amount) {
+    currentCategory.forEach((category, amount) {
       final percent = (amount / (currentTotal == 0 ? 1 : currentTotal)) * 100;
       pieSections.add(
         PieChartSectionData(
@@ -88,19 +95,40 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         backgroundColor: Colors.orange,
         actions: [
           PopupMenuButton<String>(
-            onSelected: (value) => setState(() => _filter = value),
+            onSelected: (value) async {
+              if (value == 'custom') {
+                final picked = await showDateRangePicker(
+                  context: context,
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime.now().add(const Duration(days: 365)),
+                  initialDateRange: _customRange,
+                );
+                if (picked != null) {
+                  setState(() {
+                    _customRange = picked;
+                    _filter = 'custom';
+                  });
+                }
+              } else {
+                setState(() {
+                  _filter = value;
+                  _customRange = null;
+                });
+              }
+            },
             icon: const Icon(Icons.filter_alt),
             itemBuilder: (context) => const [
               PopupMenuItem(value: 'all', child: Text('Tất cả')),
               PopupMenuItem(value: 'today', child: Text('Hôm nay')),
               PopupMenuItem(value: 'month', child: Text('Tháng này')),
+              PopupMenuItem(value: 'custom', child: Text('Chọn khoảng...')),
             ],
           ),
         ],
       ),
       body: Column(
         children: [
-          // ô tìm kiếm
+          // Tìm kiếm
           Padding(
             padding: const EdgeInsets.all(12),
             child: TextField(
@@ -127,7 +155,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             ),
           ),
 
-          // Tổng thu - Tổng chi ấn được
+          // Hiển thị khoảng thời gian chọn
+          if (_filter == 'custom' && _customRange != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                'Khoảng: ${DateFormat('dd/MM/yyyy').format(_customRange!.start)} - ${DateFormat('dd/MM/yyyy').format(_customRange!.end)}',
+                style: const TextStyle(color: Colors.grey),
+              ),
+            ),
+
+          // Tổng thu - chi ấn được
           Container(
             margin: const EdgeInsets.all(12),
             padding: const EdgeInsets.all(16),
@@ -180,8 +218,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             ),
           ),
 
-          // Biểu đồ tròn
-          if (currentCategoryMap.isNotEmpty)
+          // Biểu đồ
+          if (currentCategory.isNotEmpty)
             SizedBox(
               height: 250,
               child: PieChart(
@@ -203,15 +241,15 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               ),
             ),
 
-          // danh sách chi tiết theo danh mục
+          // Chi tiết danh mục
           Expanded(
             child: ListView(
-              children: currentCategoryMap.entries
+              children: currentCategory.entries
                   .map(
                     (e) => ListTile(
                       leading: CircleAvatar(
                         backgroundColor: Colors.primaries[
-                            currentCategoryMap.keys.toList().indexOf(e.key) %
+                            currentCategory.keys.toList().indexOf(e.key) %
                                 Colors.primaries.length],
                         child: const Icon(Icons.category, color: Colors.white),
                       ),
