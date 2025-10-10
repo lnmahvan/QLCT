@@ -12,6 +12,9 @@ class TransactionListScreen extends StatefulWidget {
 
 class _TransactionListScreenState extends State<TransactionListScreen> {
   String _filter = 'all'; // all, today, month
+  String _searchText = '';
+  final _searchController = TextEditingController();
+  DateTimeRange? _customRange;
 
   @override
   Widget build(BuildContext context) {
@@ -22,21 +25,25 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
       decimalDigits: 0,
     );
 
-    // Lọc giao dịch theo lựa chọn
     final now = DateTime.now();
-    final filtered =
-        expense.transactions.where((t) {
-          if (_filter == 'today') {
-            return t.date.day == now.day &&
-                t.date.month == now.month &&
-                t.date.year == now.year;
-          } else if (_filter == 'month') {
-            return t.date.month == now.month && t.date.year == now.year;
-          }
-          return true;
-        }).toList()..sort(
-          (a, b) => b.date.compareTo(a.date),
-        ); // sắp xếp mới nhất lên đầu
+
+    final filtered = expense.transactions.where((t) {
+      bool matchFilter = false;
+      if (_filter == 'all') {
+        matchFilter = true;
+      } else if (_filter == 'today') {
+        matchFilter = t.date.day == now.day && t.date.month == now.month && t.date.year == now.year;
+      } else if (_filter == 'month') {
+        matchFilter = t.date.month == now.month && t.date.year == now.year;
+      } else if (_filter == 'custom' && _customRange != null) {
+        matchFilter = t.date.isAfter(_customRange!.start.subtract(const Duration(days: 1))) &&
+                      t.date.isBefore(_customRange!.end.add(const Duration(days: 1)));
+      }
+      final matchSearch = t.note.toLowerCase().contains(_searchText) ||
+                          t.category.toLowerCase().contains(_searchText);
+      return matchFilter && matchSearch;
+    }).toList()
+      ..sort((a, b) => b.date.compareTo(a.date));
 
     // Tính tổng thu/chi theo bộ lọc
     double totalIncome = 0;
@@ -55,18 +62,73 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
         backgroundColor: Colors.teal,
         actions: [
           PopupMenuButton<String>(
-            onSelected: (value) => setState(() => _filter = value),
+            onSelected: (value) async {
+              if (value == 'custom') {
+                final picked = await showDateRangePicker(
+                  context: context,
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime.now().add(const Duration(days: 365)),
+                  initialDateRange: _customRange,
+                );
+                if (picked != null) {
+                  setState(() {
+                    _customRange = picked;
+                    _filter = 'custom';
+                  });
+                }
+              } else {
+                setState(() {
+                  _filter = value;
+                  _customRange = null;
+                });
+              }
+            },
             icon: const Icon(Icons.filter_alt),
             itemBuilder: (context) => [
               const PopupMenuItem(value: 'all', child: Text('Tất cả')),
               const PopupMenuItem(value: 'today', child: Text('Hôm nay')),
               const PopupMenuItem(value: 'month', child: Text('Tháng này')),
+              const PopupMenuItem(value: 'custom', child: Text('Chọn khoảng...')),
             ],
           ),
         ],
       ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Tìm theo ghi chú hoặc danh mục...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchText.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() => _searchText = '');
+                        },
+                      )
+                    : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onChanged: (value) {
+                setState(() => _searchText = value.toLowerCase());
+              },
+            ),
+          ),
+          if (_filter == 'custom' && _customRange != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                'Khoảng: ${DateFormat('dd/MM/yyyy').format(_customRange!.start)} - ${DateFormat('dd/MM/yyyy').format(_customRange!.end)}',
+                style: const TextStyle(color: Colors.grey),
+              ),
+            ),
+
           // Thống kê tổng thu/chi
           Container(
             margin: const EdgeInsets.all(12),
