@@ -14,7 +14,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
   final _noteController = TextEditingController();
   String _selectedCategory = 'Lương';
 
-  final List<String> _categories = ['Lương', 'Thưởng', 'Đầu tư', 'Khác'];
+  final List<String> _categories = ['Lương', 'Thưởng', 'Trợ cấp', 'Đầu tư', 'Khác'];
 
   @override
   Widget build(BuildContext context) {

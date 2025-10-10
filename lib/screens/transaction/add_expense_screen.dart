@@ -16,10 +16,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   final List<String> _categories = [
     'Ăn uống',
+    'Giáo dục',
+    'Quần áo',
     'Mua sắm',
     'Giải trí',
     'Đi lại',
     'Hóa đơn',
+    'Tiền nhà',
     'Khác',
   ];
 
@@ -72,15 +75,19 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     double.tryParse(_amountController.text.trim()) ?? 0;
                 final note = _noteController.text.trim();
                 if (amount > 0) {
-                  Provider.of<ExpenseModel>(context, listen: false)
-                      .addExpense(amount, note, _selectedCategory);
+                  Provider.of<ExpenseModel>(
+                    context,
+                    listen: false,
+                  ).addExpense(amount, note, _selectedCategory);
                   Navigator.pop(context);
                 }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 50,
+                  vertical: 15,
+                ),
               ),
               child: const Text('Lưu khoản chi'),
             ),
