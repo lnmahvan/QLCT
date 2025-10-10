@@ -7,6 +7,7 @@ import 'screens/transaction_screen.dart';
 import 'screens/statistics_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/transaction_list_screen.dart';
 
 void main() {
   runApp(
@@ -31,16 +32,20 @@ class MyApp extends StatelessWidget {
       title: 'Quản Lý Chi Tiêu',
       theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
       debugShowCheckedModeBanner: false,
-      home: FutureBuilder<bool>(
-        future: checkLogin(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Scaffold(
-                body: Center(child: CircularProgressIndicator()));
-          }
-          return snapshot.data! ? const HomePage() : const LoginScreen();
-        },
-      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => FutureBuilder<bool>(
+              future: checkLogin(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Scaffold(
+                      body: Center(child: CircularProgressIndicator()));
+                }
+                return snapshot.data! ? const HomePage() : const LoginScreen();
+              },
+            ),
+        '/transactions': (context) => const TransactionListScreen(),
+      },
     );
   }
 }
