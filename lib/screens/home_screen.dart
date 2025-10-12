@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../models/expense_model.dart';
 import 'widgets/balance_card.dart';
 import 'widgets/summary_card.dart';
-import 'widgets/recent_transactions.dart';
 import 'widgets/recent_transactions_section.dart';
 
 class HomeScreen extends StatelessWidget {
