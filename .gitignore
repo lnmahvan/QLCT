@@ -1,8 +1,9 @@
-# Ignore tất cả
 /*
-# Nhưng giữ lại .gitignore, lib/ và pubspec files
+
 !.gitignore
 !lib/
 !lib/**      # bỏ ignore tất cả file con trong lib
 !pubspec.yaml
 !pubspec.lock
+
+.DS_Store
