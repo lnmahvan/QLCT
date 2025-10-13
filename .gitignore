@@ -1,42 +1,6 @@
-# Flutter/Dart build files
-/build/
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-.pub-cache/
-.pub/
-
-# iOS
-**/ios/Flutter/.last_build_id
-ios/Pods/
-ios/Runner.xcworkspace/
-ios/Flutter/Flutter.framework
-ios/Flutter/Flutter.podspec
-
-# Android
-**/android/app/debug
-**/android/app/profile
-**/android/app/release
-**/.gradle/
-**/local.properties
-
-# VSCode
-.vscode/
-
-# IntelliJ/Android Studio
-.idea/
-*.iml
-
-# Miscellaneous
-*.log
-*.class
-*.swp
-.DS_Store
-
-# Documentation
-**/doc/api/
-
-# Symbolication / Obfuscation
-app.*.symbols
-app.*.map.json
+# Flutter/Dart
+**/*
+!.gitignore
+!lib/
+!pubspec.yaml
+!pubspec.lock
