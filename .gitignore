@@ -1,5 +1,5 @@
-# Flutter/Dart
 **/*
+# Giữ lại .gitignore, lib/ và pubspec files
 !.gitignore
 !lib/
 !pubspec.yaml
