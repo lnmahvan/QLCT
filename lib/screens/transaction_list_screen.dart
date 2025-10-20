@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/expense_model.dart';
-import 'widgets/transaction_search.dart';
-import 'widgets/transaction_summary.dart';
-import 'widgets/transaction_list_view.dart';
+import '../widgets/transaction_search.dart';
+import '../widgets/transaction_summary.dart';
+import '../widgets/transaction_list_view.dart';
 
 class TransactionListScreen extends StatefulWidget {
   const TransactionListScreen({super.key});

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../models/expense_model.dart';
-import 'widgets/statistics_chart.dart';
-import 'widgets/statistics_summary.dart';
-import 'widgets/statistics_category_list.dart';
-import 'widgets/statistics_search.dart';
+import '../widgets/statistics_chart.dart';
+import '../widgets/statistics_summary.dart';
+import '../widgets/statistics_category_list.dart';
+import '../widgets/statistics_search.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
