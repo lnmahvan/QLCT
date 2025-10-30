@@ -16,6 +16,8 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
   final _amountController = TextEditingController();
   final _noteController = TextEditingController();
 
+  String selectedWalletId = '';
+
   void _saveTransaction() {
     final amount = double.tryParse(_amountController.text);
     if (amount == null || amount <= 0) return;
@@ -25,6 +27,7 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
       category: widget.category,
       amount: amount,
       note: _noteController.text,
+      walletId: selectedWalletId,
     );
 
     Navigator.pop(context);
@@ -33,6 +36,11 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
   @override
   Widget build(BuildContext context) {
     final isIncome = widget.type == 'income';
+    final expenseModel = Provider.of<ExpenseModel>(context);
+    final wallets = expenseModel.wallets;
+    if (selectedWalletId.isEmpty && wallets.isNotEmpty) {
+      selectedWalletId = wallets.first.id;
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text('${isIncome ? 'Thu nhập' : 'Chi tiêu'} - ${widget.category}'),
@@ -42,6 +50,31 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: DropdownButtonFormField<String>(
+                value: selectedWalletId,
+                decoration: const InputDecoration(
+                  labelText: 'Chọn ví',
+                  border: OutlineInputBorder(),
+                ),
+                items: wallets.map((w) {
+                  return DropdownMenuItem(
+                    value: w.id,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(w.name),
+                        Text('${w.balance.toStringAsFixed(0)} ₫', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  if (val != null) setState(() => selectedWalletId = val);
+                },
+              ),
+            ),
             TextField(
               controller: _amountController,
               keyboardType: TextInputType.number,

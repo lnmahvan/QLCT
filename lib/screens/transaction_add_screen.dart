@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../models/expense_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/wallet_model.dart';
+import '../models/expense_model.dart';
 
 class TransactionAddScreen extends StatefulWidget {
   const TransactionAddScreen({super.key});
@@ -14,6 +16,8 @@ class TransactionAddScreen extends StatefulWidget {
 class _TransactionAddScreenState extends State<TransactionAddScreen> {
   List<String> customExpenseCategories = [];
   List<String> customIncomeCategories = [];
+  String selectedWalletId =
+      'wallet_cash'; // default; sau khi load wallets sẽ điều chỉnh
 
   bool isExpense = true;
   String selectedCategory = '';
@@ -34,7 +38,15 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
   @override
   void initState() {
     super.initState();
-    _loadCustomCategories();
+    // nếu bạn load wallets trong ExpenseModel async, có thể lấy từ provider sau frame:
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final expense = Provider.of<ExpenseModel>(context, listen: false);
+      if (expense.wallets.isNotEmpty) {
+        setState(() {
+          selectedWalletId = expense.wallets.first.id;
+        });
+      }
+    });
   }
 
   Future<void> _loadCustomCategories() async {
@@ -141,7 +153,8 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
       amount: amount,
       category: selectedCategory,
       date: selectedDate,
-      note: note, // 🆕 thêm ghi chú vào model
+      note: note,
+      walletId: selectedWalletId, // 🆕 thêm ví được chọn
     );
 
     ScaffoldMessenger.of(
@@ -158,6 +171,9 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
       ...(isExpense ? customExpenseCategories : customIncomeCategories),
     ];
     final typeColor = isExpense ? Colors.redAccent : Colors.green;
+
+    final expenseModel = Provider.of<ExpenseModel>(context);
+    final wallets = expenseModel.wallets;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Thêm giao dịch'), centerTitle: true),
@@ -268,6 +284,37 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
                   ],
                 ),
                 const SizedBox(height: 8),
+
+                // 🆕 Dropdown chọn ví
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: DropdownButtonFormField<String>(
+                    value: selectedWalletId,
+                    decoration: const InputDecoration(
+                      labelText: 'Chọn ví',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: wallets.map((w) {
+                      return DropdownMenuItem(
+                        value: w.id,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(w.name),
+                            Text(
+                              '${w.balance.toStringAsFixed(0)} ₫',
+                              style: const TextStyle(fontSize: 12, color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      if (val != null) setState(() => selectedWalletId = val);
+                    },
+                  ),
+                ),
+
                 // 🆕 Ô nhập ghi chú
                 Padding(
                   padding: const EdgeInsets.symmetric(
