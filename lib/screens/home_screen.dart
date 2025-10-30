@@ -4,6 +4,7 @@ import '../models/expense_model.dart';
 import '../widgets/balance_card.dart';
 import '../widgets/summary_card.dart';
 import '../widgets/recent_transactions_section.dart';
+import 'transaction_add_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -35,10 +36,39 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 25),
             SummaryCard(expense: expense),
             const SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Giao dịch gần đây',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/transaction-list');
+                  },
+                  child: const Text(
+                    'Xem tất cả',
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
             RecentTransactionsSection(expense: expense),
             const SizedBox(height: 30),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const TransactionAddScreen()),
+          );
+        },
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

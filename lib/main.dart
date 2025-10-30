@@ -3,19 +3,15 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'models/expense_model.dart';
 import 'screens/home_screen.dart';
-import 'screens/transaction_screen.dart';
+import 'screens/wallet_screen.dart';
 import 'screens/statistics_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/login_screen.dart';
-// import 'screens/transaction_list_screen.dart';
 import 'screens/transaction_list_screen.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ExpenseModel(),
-      child: const MyApp(),
-    ),
+    ChangeNotifierProvider(create: (_) => ExpenseModel(), child: const MyApp()),
   );
 }
 
@@ -53,6 +49,7 @@ class _MyAppState extends State<MyApp> {
         brightness: isDarkMode ? Brightness.dark : Brightness.light,
         useMaterial3: true,
       ),
+      routes: {'/transaction-list': (context) => const TransactionListScreen()},
       home: FutureBuilder<bool>(
         future: checkLogin(),
         builder: (context, snapshot) {
@@ -102,7 +99,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final pages = [
       const HomeScreen(),
-      const TransactionScreen(),
+      const WalletScreen(),
       const StatisticsScreen(),
       ProfileScreen(
         onThemeChanged: widget.onThemeChanged,
@@ -117,8 +114,14 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Trang chủ'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle), label: 'Giao dịch'),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Thống kê'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle),
+            label: 'Ví tiền',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bar_chart),
+            label: 'Thống kê',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Cá nhân'),
         ],
         currentIndex: _selectedIndex,
