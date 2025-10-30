@@ -61,7 +61,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                 setState(() {
                                   w.name = _nameCtrl.text.trim();
                                   w.balance = double.tryParse(_balanceCtrl.text) ?? w.balance;
-                                  expense.addWallet(w); // lưu lại (ở model bạn có thể update)
+                                  expense.notifyListeners(); // chỉ thông báo, không thêm mới
                                 });
                                 Navigator.pop(context);
                               }, child: const Text('Lưu')),
@@ -70,7 +70,22 @@ class _WalletScreenState extends State<WalletScreen> {
                         },
                       );
                     } else if (choice == 'delete') {
-                      // TODO: xóa ví (cẩn thận nếu có txn)
+                      showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: const Text('Xác nhận xóa ví?'),
+                          content: const Text('Các giao dịch gán vào ví này sẽ giữ nguyên.'),
+                          actions: [
+                            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Hủy')),
+                            ElevatedButton(onPressed: () {
+                              setState(() {
+                                expense.wallets.removeWhere((e) => e.id == w.id);
+                              });
+                              Navigator.pop(context);
+                            }, child: const Text('Xóa')),
+                          ],
+                        ),
+                      );
                     }
                   },
                   itemBuilder: (_) => [
@@ -105,7 +120,7 @@ class _WalletScreenState extends State<WalletScreen> {
               final bal = double.tryParse(_balanceCtrl.text) ?? 0;
               if (name.isEmpty) return;
               final w = Wallet(id: id, name: name, type: type, balance: bal);
-              expense.addWallet(w);
+              expense.addWallet(w); // tạo ví mới
               _nameCtrl.clear();
               _balanceCtrl.clear();
             },

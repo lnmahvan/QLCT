@@ -3,7 +3,8 @@ import 'package:intl/intl.dart';
 
 class BalanceCard extends StatelessWidget {
   final double balance;
-  const BalanceCard({super.key, required this.balance});
+  final String? walletName;
+  const BalanceCard({super.key, required this.balance, this.walletName});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,7 @@ class BalanceCard extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            'Số dư hiện tại',
+            walletName != null ? 'Số dư (${walletName!})' : 'Số dư hiện tại',
             style: TextStyle(fontSize: 16, color: Colors.grey[600]),
           ),
           const SizedBox(height: 10),

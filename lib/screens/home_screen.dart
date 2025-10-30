@@ -24,6 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
       selectedWalletId = wallets.first.id;
     }
 
+    final selectedWallet = expense.getWalletById(selectedWalletId);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Trang chủ'),
@@ -43,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            BalanceCard(balance: expense.balance),
+            BalanceCard(balance: selectedWallet.balance, walletName: selectedWallet.name),
             const SizedBox(height: 25),
             SummaryCard(expense: expense),
             const SizedBox(height: 30),
