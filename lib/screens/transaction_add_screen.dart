@@ -52,6 +52,45 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
     }
   }
 
+  void _addCustomCategory(BuildContext context) {
+    final TextEditingController _controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: const Text('Thêm danh mục mới'),
+          content: TextField(
+            controller: _controller,
+            decoration: const InputDecoration(hintText: 'Nhập tên danh mục'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Hủy'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final newCategory = _controller.text.trim();
+                if (newCategory.isNotEmpty) {
+                  setState(() {
+                    if (isExpense) {
+                      expenseCategories.add(newCategory);
+                    } else {
+                      incomeCategories.add(newCategory);
+                    }
+                  });
+                }
+                Navigator.pop(context);
+              },
+              child: const Text('Thêm'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _saveTransaction() {
     if (_amountController.text.isEmpty || selectedCategory.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -120,8 +159,25 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
-              itemCount: categories.length,
+              itemCount:
+                  categories.length + 1, // +1 để thêm nút "Thêm danh mục"
               itemBuilder: (context, index) {
+                if (index == categories.length) {
+                  // 🔸 Nút thêm danh mục
+                  return GestureDetector(
+                    onTap: () => _addCustomCategory(context),
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.blue, width: 2),
+                      ),
+                      child: const Icon(Icons.add, color: Colors.blue),
+                    ),
+                  );
+                }
+
                 final cat = categories[index];
                 final selected = cat == selectedCategory;
                 return GestureDetector(
