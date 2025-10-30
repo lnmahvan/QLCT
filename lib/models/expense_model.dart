@@ -38,6 +38,7 @@ class ExpenseModel extends ChangeNotifier {
     String note = '',
     required String category,
     DateTime? date,
+
   }) {
     final item = TransactionItem(
       type: type,
@@ -45,6 +46,7 @@ class ExpenseModel extends ChangeNotifier {
       note: note,
       category: category,
       date: date ?? DateTime.now(),
+
     );
 
     _transactions.add(item);

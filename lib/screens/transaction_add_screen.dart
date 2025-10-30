@@ -14,10 +14,13 @@ class TransactionAddScreen extends StatefulWidget {
 class _TransactionAddScreenState extends State<TransactionAddScreen> {
   List<String> customExpenseCategories = [];
   List<String> customIncomeCategories = [];
+
   bool isExpense = true;
   String selectedCategory = '';
   DateTime selectedDate = DateTime.now();
   final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _noteController =
+      TextEditingController(); // 🆕 thêm dòng này
 
   final expenseCategories = [
     'Ăn uống',
@@ -35,18 +38,23 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
   }
 
   Future<void> _loadCustomCategories() async {
-  final prefs = await SharedPreferences.getInstance();
-  setState(() {
-    customExpenseCategories = prefs.getStringList('customExpenseCategories') ?? [];
-    customIncomeCategories = prefs.getStringList('customIncomeCategories') ?? [];
-  });
-}
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      customExpenseCategories =
+          prefs.getStringList('customExpenseCategories') ?? [];
+      customIncomeCategories =
+          prefs.getStringList('customIncomeCategories') ?? [];
+    });
+  }
 
-Future<void> _saveCustomCategories() async {
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setStringList('customExpenseCategories', customExpenseCategories);
-  await prefs.setStringList('customIncomeCategories', customIncomeCategories);
-}
+  Future<void> _saveCustomCategories() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(
+      'customExpenseCategories',
+      customExpenseCategories,
+    );
+    await prefs.setStringList('customIncomeCategories', customIncomeCategories);
+  }
 
   void _pickDate() async {
     final date = await showDatePicker(
@@ -76,45 +84,46 @@ Future<void> _saveCustomCategories() async {
   }
 
   void _addCustomCategory(BuildContext context) {
-  final TextEditingController _controller = TextEditingController();
+    final TextEditingController _controller = TextEditingController();
 
-  showDialog(
-    context: context,
-    builder: (_) {
-      return AlertDialog(
-        title: const Text('Thêm danh mục mới'),
-        content: TextField(
-          controller: _controller,
-          decoration: const InputDecoration(hintText: 'Nhập tên danh mục'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Hủy'),
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: const Text('Thêm danh mục mới'),
+          content: TextField(
+            controller: _controller,
+            decoration: const InputDecoration(hintText: 'Nhập tên danh mục'),
           ),
-          ElevatedButton(
-            onPressed: () async {
-              final newCategory = _controller.text.trim();
-              if (newCategory.isNotEmpty) {
-                setState(() {
-                  if (isExpense) {
-                    customExpenseCategories.add(newCategory);
-                  } else {
-                    customIncomeCategories.add(newCategory);
-                  }
-                });
-                await _saveCustomCategories();
-              }
-              Navigator.pop(context);
-            },
-            child: const Text('Thêm'),
-          ),
-        ],
-      );
-    },
-  );
-}
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Hủy'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final newCategory = _controller.text.trim();
+                if (newCategory.isNotEmpty) {
+                  setState(() {
+                    if (isExpense) {
+                      customExpenseCategories.add(newCategory);
+                    } else {
+                      customIncomeCategories.add(newCategory);
+                    }
+                  });
+                  await _saveCustomCategories();
+                }
+                Navigator.pop(context);
+              },
+              child: const Text('Thêm'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
+  // 🆕 hàm lưu giao dịch
   void _saveTransaction() {
     if (_amountController.text.isEmpty || selectedCategory.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -125,12 +134,14 @@ Future<void> _saveCustomCategories() async {
 
     final expense = Provider.of<ExpenseModel>(context, listen: false);
     final double amount = double.tryParse(_amountController.text) ?? 0;
+    final note = _noteController.text.trim(); // 🆕 lấy ghi chú
 
     expense.addTransaction(
       type: isExpense ? 'expense' : 'income',
       amount: amount,
       category: selectedCategory,
       date: selectedDate,
+      note: note, // 🆕 thêm ghi chú vào model
     );
 
     ScaffoldMessenger.of(
@@ -257,7 +268,22 @@ Future<void> _saveCustomCategories() async {
                   ],
                 ),
                 const SizedBox(height: 8),
-
+                // 🆕 Ô nhập ghi chú
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
+                  child: TextField(
+                    controller: _noteController,
+                    decoration: const InputDecoration(
+                      labelText: 'Ghi chú',
+                      border: OutlineInputBorder(),
+                      hintText: 'Nhập ghi chú (tùy chọn)',
+                    ),
+                    maxLines: 1,
+                  ),
+                ),
                 // Ô hiển thị số tiền
                 TextField(
                   controller: _amountController,
