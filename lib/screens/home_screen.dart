@@ -13,13 +13,23 @@ class HomeScreen extends StatelessWidget {
     final expense = Provider.of<ExpenseModel>(context);
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Trang chủ'),
+        centerTitle: true,
+        backgroundColor: Colors.blue,
+      ),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 20),
             const Icon(Icons.home, size: 80, color: Colors.blue),
             const SizedBox(height: 10),
-            const Text('Tổng quan chi tiêu', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const Text(
+              'Tổng quan chi tiêu',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 20),
             BalanceCard(balance: expense.balance),
             const SizedBox(height: 25),

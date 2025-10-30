@@ -45,7 +45,14 @@ class _LoginScreenState extends State<LoginScreen> {
     if (mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomePage()),
+        MaterialPageRoute(
+          builder: (_) => HomePage(
+            onThemeChanged: (value) {},
+            onColorChanged: (color) {},
+            isDarkMode: false,
+            primaryColor: Colors.blue,
+          ),
+        ),
       );
     }
   }
@@ -60,15 +67,19 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.account_circle,
-                  size: 100, color: Colors.blueAccent),
+              const Icon(
+                Icons.account_circle,
+                size: 100,
+                color: Colors.blueAccent,
+              ),
               const SizedBox(height: 20),
               const Text(
                 'Đăng nhập',
                 style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueAccent),
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
               ),
               const SizedBox(height: 30),
               TextField(
@@ -95,8 +106,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
                   foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 60,
+                    vertical: 15,
+                  ),
                 ),
                 child: _isLoading
                     ? const CircularProgressIndicator(color: Colors.white)

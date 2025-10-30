@@ -3,9 +3,21 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/expense_model.dart';
 import 'login_screen.dart';
+import 'settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final void Function(bool)? onThemeChanged;
+  final void Function(Color)? onColorChanged;
+  final bool? isDarkMode;
+  final Color? primaryColor;
+
+  const ProfileScreen({
+    super.key,
+    this.onThemeChanged,
+    this.onColorChanged,
+    this.isDarkMode,
+    this.primaryColor,
+  });
 
   Future<void> _logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -67,6 +79,31 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const Divider(),
+
+            // 🧩 Thêm phần CÀI ĐẶT
+            ListTile(
+              leading: const Icon(Icons.settings, color: Colors.blueAccent),
+              title: const Text('Cài đặt'),
+              subtitle: const Text('Tùy chỉnh giao diện, ngôn ngữ, hệ thống'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => SettingsScreen(
+                      onThemeChanged: onThemeChanged ?? (_) {},
+                      onColorChanged: onColorChanged ?? (_) {},
+                      isDarkMode: isDarkMode ?? false,
+                      primaryColor: primaryColor ?? Colors.blue,
+                    ),
+                  ),
+                );
+              },
+            ),
+
+            const Divider(),
+
+            // 🔴 Đăng xuất
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
               title: const Text('Đăng xuất',
