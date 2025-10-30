@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../models/expense_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TransactionAddScreen extends StatefulWidget {
   const TransactionAddScreen({super.key});
@@ -11,6 +12,8 @@ class TransactionAddScreen extends StatefulWidget {
 }
 
 class _TransactionAddScreenState extends State<TransactionAddScreen> {
+  List<String> customExpenseCategories = [];
+  List<String> customIncomeCategories = [];
   bool isExpense = true;
   String selectedCategory = '';
   DateTime selectedDate = DateTime.now();
@@ -24,6 +27,26 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
     'Khác',
   ];
   final incomeCategories = ['Lương', 'Thưởng', 'Đầu tư', 'Khác'];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCustomCategories();
+  }
+
+  Future<void> _loadCustomCategories() async {
+  final prefs = await SharedPreferences.getInstance();
+  setState(() {
+    customExpenseCategories = prefs.getStringList('customExpenseCategories') ?? [];
+    customIncomeCategories = prefs.getStringList('customIncomeCategories') ?? [];
+  });
+}
+
+Future<void> _saveCustomCategories() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setStringList('customExpenseCategories', customExpenseCategories);
+  await prefs.setStringList('customIncomeCategories', customIncomeCategories);
+}
 
   void _pickDate() async {
     final date = await showDatePicker(
@@ -53,43 +76,44 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
   }
 
   void _addCustomCategory(BuildContext context) {
-    final TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
-    showDialog(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
-          title: const Text('Thêm danh mục mới'),
-          content: TextField(
-            controller: _controller,
-            decoration: const InputDecoration(hintText: 'Nhập tên danh mục'),
+  showDialog(
+    context: context,
+    builder: (_) {
+      return AlertDialog(
+        title: const Text('Thêm danh mục mới'),
+        content: TextField(
+          controller: _controller,
+          decoration: const InputDecoration(hintText: 'Nhập tên danh mục'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Hủy'),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Hủy'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final newCategory = _controller.text.trim();
-                if (newCategory.isNotEmpty) {
-                  setState(() {
-                    if (isExpense) {
-                      expenseCategories.add(newCategory);
-                    } else {
-                      incomeCategories.add(newCategory);
-                    }
-                  });
-                }
-                Navigator.pop(context);
-              },
-              child: const Text('Thêm'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+          ElevatedButton(
+            onPressed: () async {
+              final newCategory = _controller.text.trim();
+              if (newCategory.isNotEmpty) {
+                setState(() {
+                  if (isExpense) {
+                    customExpenseCategories.add(newCategory);
+                  } else {
+                    customIncomeCategories.add(newCategory);
+                  }
+                });
+                await _saveCustomCategories();
+              }
+              Navigator.pop(context);
+            },
+            child: const Text('Thêm'),
+          ),
+        ],
+      );
+    },
+  );
+}
 
   void _saveTransaction() {
     if (_amountController.text.isEmpty || selectedCategory.isEmpty) {
@@ -118,7 +142,10 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final categories = isExpense ? expenseCategories : incomeCategories;
+    final categories = [
+      ...(isExpense ? expenseCategories : incomeCategories),
+      ...(isExpense ? customExpenseCategories : customIncomeCategories),
+    ];
     final typeColor = isExpense ? Colors.redAccent : Colors.green;
 
     return Scaffold(
