@@ -55,12 +55,22 @@ class RecentTransactionsSection extends StatelessWidget {
                         ),
                       ),
                       title: Text(
-                        t.note.isNotEmpty ? t.note : t.category,
+                        t.category,
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
-                      subtitle: Text(
-                        DateFormat('dd/MM/yyyy').format(t.date),
-                        style: const TextStyle(color: Colors.grey),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (t.note.isNotEmpty)
+                            Text(
+                              t.note,
+                              style: const TextStyle(color: Colors.black87),
+                            ),
+                          Text(
+                            DateFormat('dd/MM/yyyy').format(t.date),
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        ],
                       ),
                       trailing: Text(
                         '$sign ${formatCurrency.format(t.amount)}',

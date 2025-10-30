@@ -6,6 +6,7 @@ import '../widgets/statistics_chart.dart';
 import '../widgets/statistics_summary.dart';
 import '../widgets/statistics_category_list.dart';
 import '../widgets/statistics_search.dart';
+import 'transaction_list_screen.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
@@ -59,6 +60,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               PopupMenuItem(value: 'month', child: Text('Tháng này')),
               PopupMenuItem(value: 'custom', child: Text('Chọn khoảng...')),
             ],
+
+
           ),
         ],
       ),
@@ -69,6 +72,25 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             searchText: _searchText,
             onChanged: (val) => setState(() => _searchText = val.toLowerCase()),
             onClear: () => setState(() => _searchText = ''),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const TransactionListScreen()),
+                  );
+                },
+                child: const Text(
+                  'Xem chi tiết',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            ),
           ),
 
           if (_filter == 'custom' && _customRange != null)
