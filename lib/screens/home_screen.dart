@@ -6,12 +6,23 @@ import '../widgets/summary_card.dart';
 import '../widgets/recent_transactions_section.dart';
 import 'transaction_add_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String selectedWalletId = '';
 
   @override
   Widget build(BuildContext context) {
     final expense = Provider.of<ExpenseModel>(context);
+    final wallets = expense.wallets;
+    if (wallets.isNotEmpty && selectedWalletId.isEmpty) {
+      selectedWalletId = wallets.first.id;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -55,7 +66,42 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-            RecentTransactionsSection(expense: expense),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: DropdownButtonFormField<String>(
+                value: selectedWalletId,
+                decoration: const InputDecoration(
+                  labelText: 'Chọn ví',
+                  border: OutlineInputBorder(),
+                ),
+                items: wallets.map((w) {
+                  return DropdownMenuItem(
+                    value: w.id,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(w.name),
+                        Text('${w.balance.toStringAsFixed(0)} ₫', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  if (val != null) {
+                    setState(() {
+                      selectedWalletId = val;
+                    });
+                  }
+                },
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            RecentTransactionsSection(
+              expense: expense,
+              selectedWalletId: selectedWalletId,
+            ),
             const SizedBox(height: 30),
           ],
         ),

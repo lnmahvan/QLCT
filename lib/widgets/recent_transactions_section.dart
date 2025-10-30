@@ -4,11 +4,19 @@ import '../../models/expense_model.dart';
 
 class RecentTransactionsSection extends StatelessWidget {
   final ExpenseModel expense;
-  const RecentTransactionsSection({super.key, required this.expense});
+  final String selectedWalletId;
+
+  const RecentTransactionsSection({
+    super.key,
+    required this.expense,
+    required this.selectedWalletId,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final sorted = expense.transactions.toList()
+    final sorted = expense.transactions
+        .where((t) => t.walletId == selectedWalletId)
+        .toList()
       ..sort((a, b) => b.date.compareTo(a.date));
     final recent = sorted.take(5).toList();
     final formatCurrency = NumberFormat.currency(
