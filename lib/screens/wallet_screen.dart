@@ -13,8 +13,22 @@ class WalletScreen extends StatefulWidget {
 }
 
 class _WalletScreenState extends State<WalletScreen> {
-  final _nameCtrl = TextEditingController();
-  final _balanceCtrl = TextEditingController();
+  // dùng riêng cho TẠO ví
+  final _createNameCtrl = TextEditingController();
+  final _createBalanceCtrl = TextEditingController();
+
+  // dùng riêng cho SỬA ví (dialog)
+  final _editNameCtrl = TextEditingController();
+  final _editBalanceCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _createNameCtrl.dispose();
+    _createBalanceCtrl.dispose();
+    _editNameCtrl.dispose();
+    _editBalanceCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +36,7 @@ class _WalletScreenState extends State<WalletScreen> {
     final wallets = expense.wallets;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ví tiền'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Ví tiền'), centerTitle: true),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -33,7 +44,11 @@ class _WalletScreenState extends State<WalletScreen> {
             Card(
               child: ListTile(
                 leading: Icon(
-                  w.type == 'cash' ? Icons.money : w.type == 'debit' ? Icons.account_balance_wallet : Icons.credit_card,
+                  w.type == 'cash'
+                      ? Icons.money
+                      : w.type == 'debit'
+                      ? Icons.account_balance_wallet
+                      : Icons.credit_card,
                 ),
                 title: Text(w.name),
                 subtitle: Text('Số dư: ${w.balance.toStringAsFixed(0)} ₫'),
@@ -44,27 +59,61 @@ class _WalletScreenState extends State<WalletScreen> {
                       await showDialog(
                         context: context,
                         builder: (_) {
-                          _nameCtrl.text = w.name;
-                          _balanceCtrl.text = w.balance.toString();
+                          _editNameCtrl.text = w.name;
+                          _editBalanceCtrl.text = w.balance.toString();
                           return AlertDialog(
                             title: const Text('Chỉnh ví'),
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                TextField(controller: _nameCtrl, decoration: const InputDecoration(labelText: 'Tên ví')),
-                                TextField(controller: _balanceCtrl, decoration: const InputDecoration(labelText: 'Số dư'), keyboardType: TextInputType.number),
+                                TextField(
+                                  controller: _editNameCtrl,
+                                  decoration: const InputDecoration(labelText: 'Tên ví'),
+                                ),
+                                TextField(
+                                  controller: _editBalanceCtrl,
+                                  decoration: const InputDecoration(labelText: 'Số dư'),
+                                  keyboardType: TextInputType.number,
+                                ),
                               ],
                             ),
                             actions: [
-                              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Hủy')),
-                              ElevatedButton(onPressed: () {
-                                setState(() {
-                                  w.name = _nameCtrl.text.trim();
-                                  w.balance = double.tryParse(_balanceCtrl.text) ?? w.balance;
-                                  expense.notifyListeners(); // chỉ thông báo, không thêm mới
-                                });
-                                Navigator.pop(context);
-                              }, child: const Text('Lưu')),
+                              TextButton(
+                                onPressed: () {
+                                  _editNameCtrl.clear();
+                                  _editBalanceCtrl.clear();
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Hủy'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  final oldBalance = w.balance;
+                                  final newBalance =
+                                      double.tryParse(_editBalanceCtrl.text) ?? w.balance;
+                                  final delta = newBalance - oldBalance;
+
+                                  setState(() {
+                                    w.name = _editNameCtrl.text.trim();
+
+                                    if (delta != 0) {
+                                      expense.addTransaction(
+                                        type: delta > 0 ? 'income' : 'expense',
+                                        amount: delta.abs(),
+                                        category: 'Điều chỉnh số dư',
+                                        note: 'Cập nhật số dư ví "${w.name}"',
+                                        walletId: w.id,
+                                      );
+                                    }
+
+                                    expense.notifyListeners();
+                                  });
+                                  _editNameCtrl.clear();
+                                  _editBalanceCtrl.clear();
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Lưu'),
+                              ),
                             ],
                           );
                         },
@@ -74,15 +123,25 @@ class _WalletScreenState extends State<WalletScreen> {
                         context: context,
                         builder: (_) => AlertDialog(
                           title: const Text('Xác nhận xóa ví?'),
-                          content: const Text('Các giao dịch gán vào ví này sẽ giữ nguyên.'),
+                          content: const Text(
+                            'Các giao dịch gán vào ví này sẽ giữ nguyên.',
+                          ),
                           actions: [
-                            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Hủy')),
-                            ElevatedButton(onPressed: () {
-                              setState(() {
-                                expense.wallets.removeWhere((e) => e.id == w.id);
-                              });
-                              Navigator.pop(context);
-                            }, child: const Text('Xóa')),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('Hủy'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  expense.wallets.removeWhere(
+                                    (e) => e.id == w.id,
+                                  );
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Xóa'),
+                            ),
                           ],
                         ),
                       );
@@ -96,8 +155,14 @@ class _WalletScreenState extends State<WalletScreen> {
               ),
             ),
           const SizedBox(height: 20),
-          const Text('Tạo ví mới', style: TextStyle(fontWeight: FontWeight.bold)),
-          TextField(controller: _nameCtrl, decoration: const InputDecoration(labelText: 'Tên ví')),
+          const Text(
+            'Tạo ví mới',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          TextField(
+            controller: _createNameCtrl,
+            decoration: const InputDecoration(labelText: 'Tên ví'),
+          ),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
             value: 'cash',
@@ -110,19 +175,23 @@ class _WalletScreenState extends State<WalletScreen> {
             decoration: const InputDecoration(labelText: 'Loại ví'),
           ),
           const SizedBox(height: 8),
-          TextField(controller: _balanceCtrl, decoration: const InputDecoration(labelText: 'Số dư ban đầu'), keyboardType: TextInputType.number),
+          TextField(
+            controller: _createBalanceCtrl,
+            decoration: const InputDecoration(labelText: 'Số dư ban đầu'),
+            keyboardType: TextInputType.number,
+          ),
           const SizedBox(height: 8),
           ElevatedButton(
             onPressed: () {
               final id = const Uuid().v4();
-              final name = _nameCtrl.text.trim();
+              final name = _createNameCtrl.text.trim();
               final type = 'cash';
-              final bal = double.tryParse(_balanceCtrl.text) ?? 0;
+              final bal = double.tryParse(_createBalanceCtrl.text) ?? 0;
               if (name.isEmpty) return;
               final w = Wallet(id: id, name: name, type: type, balance: bal);
               expense.addWallet(w); // tạo ví mới
-              _nameCtrl.clear();
-              _balanceCtrl.clear();
+              _createNameCtrl.clear();
+              _createBalanceCtrl.clear();
             },
             child: const Text('Tạo ví'),
           ),

@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../models/expense_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/wallet_model.dart';
+// import '../models/wallet_model.dart';
 
 class TransactionAddScreen extends StatefulWidget {
   const TransactionAddScreen({super.key});
@@ -37,6 +37,8 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
   @override
   void initState() {
     super.initState();
+    _loadCustomCategories(); // Gọi để load danh mục người dùng đã lưu
+
     // nếu bạn load wallets trong ExpenseModel async, có thể lấy từ provider sau frame:
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final expense = Provider.of<ExpenseModel>(context, listen: false);
@@ -286,7 +288,10 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
 
                 // 🆕 Dropdown chọn ví
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
                   child: DropdownButtonFormField<String>(
                     value: selectedWalletId,
                     decoration: const InputDecoration(
@@ -302,7 +307,10 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
                             Text(w.name),
                             Text(
                               '${w.balance.toStringAsFixed(0)} ₫',
-                              style: const TextStyle(fontSize: 12, color: Colors.grey),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
                             ),
                           ],
                         ),
