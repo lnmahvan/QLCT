@@ -25,13 +25,8 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
   final TextEditingController _noteController =
       TextEditingController(); // 🆕 thêm dòng này
 
-  final expenseCategories = [
-    'Ăn uống',
-    'Đi lại',
-    'Quần áo',
-    'Giải trí',
-  ];
-  final incomeCategories = ['Lương', 'Thưởng', 'Đầu tư',];
+  final expenseCategories = ['Ăn uống', 'Đi lại', 'Quần áo', 'Giải trí'];
+  final incomeCategories = ['Lương', 'Thưởng', 'Đầu tư'];
 
   @override
   void initState() {
@@ -136,10 +131,14 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
   }
 
   void _removeCustomCategory(BuildContext context) {
-    final categories = isExpense ? customExpenseCategories : customIncomeCategories;
+    final categories = isExpense
+        ? customExpenseCategories
+        : customIncomeCategories;
     if (categories.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Không có danh mục tùy chỉnh nào để xóa.')),
+        const SnackBar(
+          content: Text('Không có danh mục tùy chỉnh nào để xóa.'),
+        ),
       );
       return;
     }
@@ -267,38 +266,44 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
                     categories.length + 1, // +1 để thêm nút "Thêm danh mục"
                 itemBuilder: (context, index) {
                   if (index == categories.length) {
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => _addCustomCategory(context),
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.blue.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.blue, width: 2),
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _addCustomCategory(context),
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.blue,
+                                  width: 2,
+                                ),
+                              ),
+                              child: const Icon(Icons.add, color: Colors.blue),
                             ),
-                            child: const Icon(Icons.add, color: Colors.blue),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => _removeCustomCategory(context),
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.red.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.red, width: 2),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _removeCustomCategory(context),
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.red.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.red, width: 2),
+                              ),
+                              child: const Icon(
+                                Icons.remove,
+                                color: Colors.red,
+                              ),
                             ),
-                            child: const Icon(Icons.remove, color: Colors.red),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
                     );
                   }
 
@@ -452,36 +457,75 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
                   const SizedBox(height: 4),
 
                   // Bàn phím số
-                  GridView.count(
-                    crossAxisCount: 3,
-                    shrinkWrap: true,
-                    childAspectRatio: 2.8,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: [
-                      ...['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].map(
-                        (num) => ElevatedButton(
-                          onPressed: () => _onNumberPressed(num),
-                          child: Text(num, style: const TextStyle(fontSize: 18)),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: _onBackspace,
-                        child: const Icon(Icons.backspace),
-                      ),
-                      ElevatedButton(
-                        onPressed: _saveTransaction,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: typeColor,
-                        ),
-                        child: const Text(
-                          'Lưu',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: GridView.count(
+                      crossAxisCount: 3,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      mainAxisSpacing: 8, // khoảng cách dọc
+                      crossAxisSpacing: 8, // khoảng cách ngang
+                      childAspectRatio: 2.2, // điều chỉnh tỉ lệ ô cho gọn
+                      children: [
+                        ...[
+                          '1',
+                          '2',
+                          '3',
+                          '4',
+                          '5',
+                          '6',
+                          '7',
+                          '8',
+                          '9',
+                          '0',
+                        ].map(
+                          (num) => ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed: () => _onNumberPressed(num),
+                            child: Text(
+                              num,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: _onBackspace,
+                          child: const Icon(Icons.backspace_outlined, size: 22),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: _saveTransaction,
+                          child: const Text(
+                            'Lưu',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
