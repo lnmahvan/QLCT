@@ -7,6 +7,7 @@ class TransactionListView extends StatelessWidget {
   final String filter;
   final DateTimeRange? customRange;
   final String searchText;
+  final String? selectedWalletId;
 
   const TransactionListView({
     super.key,
@@ -14,12 +15,16 @@ class TransactionListView extends StatelessWidget {
     required this.filter,
     this.customRange,
     required this.searchText,
+    this.selectedWalletId,
   });
 
   @override
   Widget build(BuildContext context) {
-    final formatCurrency =
-        NumberFormat.currency(locale: 'vi_VN', symbol: '₫', decimalDigits: 0);
+    final formatCurrency = NumberFormat.currency(
+      locale: 'vi_VN',
+      symbol: '₫',
+      decimalDigits: 0,
+    );
     final now = DateTime.now();
 
     final filtered = expense.transactions.where((t) {
@@ -29,20 +34,27 @@ class TransactionListView extends StatelessWidget {
         matchFilter = true;
       } else if (filter == 'today') {
         matchFilter =
-            t.date.day == now.day && t.date.month == now.month && t.date.year == now.year;
+            t.date.day == now.day &&
+            t.date.month == now.month &&
+            t.date.year == now.year;
       } else if (filter == 'month') {
         matchFilter = t.date.month == now.month && t.date.year == now.year;
       } else if (filter == 'custom' && customRange != null) {
-        matchFilter = t.date.isAfter(customRange!.start.subtract(const Duration(days: 1))) &&
+        matchFilter =
+            t.date.isAfter(
+              customRange!.start.subtract(const Duration(days: 1)),
+            ) &&
             t.date.isBefore(customRange!.end.add(const Duration(days: 1)));
       }
 
       final matchSearch =
-          t.note.toLowerCase().contains(searchText) || t.category.toLowerCase().contains(searchText);
+          t.note.toLowerCase().contains(searchText) ||
+          t.category.toLowerCase().contains(searchText);
 
-      return matchFilter && matchSearch;
-    }).toList()
-      ..sort((a, b) => b.date.compareTo(a.date));
+      final matchWallet = selectedWalletId == null || t.walletId == selectedWalletId;
+
+      return matchFilter && matchSearch && matchWallet;
+    }).toList()..sort((a, b) => b.date.compareTo(a.date));
 
     if (filtered.isEmpty) {
       return const Center(
@@ -68,17 +80,17 @@ class TransactionListView extends StatelessWidget {
               color: t.type == 'income' ? Colors.green : Colors.redAccent,
               size: 28,
             ),
-            title: Text(t.note.isNotEmpty ? t.note : '(Không có ghi chú)',
-                style: const TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(
+              t.note.isNotEmpty ? t.note : '(Không có ghi chú)',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Danh mục: ${t.category}'),
-                Text(formattedDate),
-              ],
+              children: [Text('Danh mục: ${t.category}'), Text(formattedDate)],
             ),
             trailing: Text(
-              (t.type == 'income' ? '+' : '-') + formatCurrency.format(t.amount),
+              (t.type == 'income' ? '+' : '-') +
+                  formatCurrency.format(t.amount),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,

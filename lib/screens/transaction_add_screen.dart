@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../models/expense_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/wallet_model.dart';
-import '../models/expense_model.dart';
 
 class TransactionAddScreen extends StatefulWidget {
   const TransactionAddScreen({super.key});

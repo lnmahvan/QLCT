@@ -5,6 +5,7 @@ import '../widgets/balance_card.dart';
 import '../widgets/summary_card.dart';
 import '../widgets/recent_transactions_section.dart';
 import 'transaction_add_screen.dart';
+import 'transaction_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -45,7 +46,10 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            BalanceCard(balance: selectedWallet.balance, walletName: selectedWallet.name),
+            BalanceCard(
+              balance: selectedWallet.balance,
+              walletName: selectedWallet.name,
+            ),
             const SizedBox(height: 25),
             SummaryCard(expense: expense),
             const SizedBox(height: 30),
@@ -58,7 +62,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/transaction-list');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TransactionListScreen(
+                          selectedWalletId: selectedWalletId,
+                        ),
+                      ),
+                    );
                   },
                   child: const Text(
                     'Xem tất cả',
@@ -83,7 +94,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(w.name),
-                        Text('${w.balance.toStringAsFixed(0)} ₫', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                        Text(
+                          '${w.balance.toStringAsFixed(0)} ₫',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                        ),
                       ],
                     ),
                   );

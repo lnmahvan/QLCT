@@ -6,7 +6,9 @@ import '../widgets/transaction_summary.dart';
 import '../widgets/transaction_list_view.dart';
 
 class TransactionListScreen extends StatefulWidget {
-  const TransactionListScreen({super.key});
+  final String? selectedWalletId;
+
+  const TransactionListScreen({super.key, this.selectedWalletId});
 
   @override
   State<TransactionListScreen> createState() => _TransactionListScreenState();
@@ -21,6 +23,11 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
   @override
   Widget build(BuildContext context) {
     final expense = Provider.of<ExpenseModel>(context);
+    final transactions = widget.selectedWalletId == null
+        ? expense.transactions
+        : expense.transactions
+              .where((t) => t.walletId == widget.selectedWalletId)
+              .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -80,6 +87,7 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
             filter: _filter,
             customRange: _customRange,
             searchText: _searchText,
+            selectedWalletId: widget.selectedWalletId, // 🆕 thêm dòng này
           ),
           Expanded(
             child: TransactionListView(
@@ -87,6 +95,7 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
               filter: _filter,
               customRange: _customRange,
               searchText: _searchText,
+              selectedWalletId: widget.selectedWalletId, // 🆕 thêm dòng này
             ),
           ),
         ],
