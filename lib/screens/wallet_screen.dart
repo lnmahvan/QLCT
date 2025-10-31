@@ -106,7 +106,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                       );
                                     }
 
-                                    expense.notifyListeners();
+                                    // expense.notifyListeners();
                                   });
                                   _editNameCtrl.clear();
                                   _editBalanceCtrl.clear();

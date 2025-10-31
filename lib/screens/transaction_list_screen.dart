@@ -23,11 +23,11 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
   @override
   Widget build(BuildContext context) {
     final expense = Provider.of<ExpenseModel>(context);
-    final transactions = widget.selectedWalletId == null
-        ? expense.transactions
-        : expense.transactions
-              .where((t) => t.walletId == widget.selectedWalletId)
-              .toList();
+    // final transactions = widget.selectedWalletId == null
+    //     ? expense.transactions
+    //     : expense.transactions
+    //           .where((t) => t.walletId == widget.selectedWalletId)
+    //           .toList();
 
     return Scaffold(
       appBar: AppBar(
