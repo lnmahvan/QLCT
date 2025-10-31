@@ -30,9 +30,8 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
     'Đi lại',
     'Quần áo',
     'Giải trí',
-    'Khác',
   ];
-  final incomeCategories = ['Lương', 'Thưởng', 'Đầu tư', 'Khác'];
+  final incomeCategories = ['Lương', 'Thưởng', 'Đầu tư',];
 
   @override
   void initState() {
