@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'wallet_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class TransactionItem {
   final String type; // 'income' hoặc 'expense'
@@ -31,17 +33,86 @@ class ExpenseModel extends ChangeNotifier {
     Wallet(id: 'wallet_credit', name: 'Thẻ tín dụng', type: 'credit', balance: 0),
   ];
 
+  ExpenseModel() {
+    loadData();
+  }
+
+  Future<void> saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final walletData = _wallets
+        .map((w) => {
+              'id': w.id,
+              'name': w.name,
+              'type': w.type,
+              'balance': w.balance,
+            })
+        .toList();
+    final transactionData = _transactions
+        .map((t) => {
+              'type': t.type,
+              'amount': t.amount,
+              'note': t.note,
+              'category': t.category,
+              'date': t.date.toIso8601String(),
+              'walletId': t.walletId,
+            })
+        .toList();
+
+    await prefs.setString('wallets', jsonEncode(walletData));
+    await prefs.setString('transactions', jsonEncode(transactionData));
+    await prefs.setDouble('income', _income);
+    await prefs.setDouble('expense', _expense);
+  }
+
+  Future<void> loadData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final walletsJson = prefs.getString('wallets');
+    final transactionsJson = prefs.getString('transactions');
+    _income = prefs.getDouble('income') ?? 0;
+    _expense = prefs.getDouble('expense') ?? 0;
+
+    if (walletsJson != null) {
+      final List<dynamic> walletList = jsonDecode(walletsJson);
+      _wallets
+        ..clear()
+        ..addAll(walletList.map((w) => Wallet(
+              id: w['id'],
+              name: w['name'],
+              type: w['type'],
+              balance: (w['balance'] as num).toDouble(),
+            )));
+    }
+
+    if (transactionsJson != null) {
+      final List<dynamic> transactionList = jsonDecode(transactionsJson);
+      _transactions
+        ..clear()
+        ..addAll(transactionList.map((t) => TransactionItem(
+              type: t['type'],
+              amount: (t['amount'] as num).toDouble(),
+              note: t['note'],
+              category: t['category'],
+              date: DateTime.parse(t['date']),
+              walletId: t['walletId'],
+            )));
+    }
+
+    notifyListeners();
+  }
+
   List<Wallet> get wallets => _wallets;
 
   void addWallet(Wallet wallet) {
     _wallets.add(wallet);
     notifyListeners();
+    saveData();
   }
 
   void updateWalletBalance(String walletId, double delta) {
     final wallet = _wallets.firstWhere((w) => w.id == walletId);
     wallet.balance += delta;
     notifyListeners();
+    saveData();
   }
 
   Wallet getWalletById(String id) {
@@ -87,6 +158,7 @@ class ExpenseModel extends ChangeNotifier {
     }
 
     notifyListeners();
+    saveData();
   }
 
   // 🔹 Thêm danh mục mới
@@ -94,6 +166,7 @@ class ExpenseModel extends ChangeNotifier {
     if (!incomeCategories.contains(name)) {
       incomeCategories.add(name);
       notifyListeners();
+      saveData();
     }
   }
 
@@ -101,6 +174,7 @@ class ExpenseModel extends ChangeNotifier {
     if (!expenseCategories.contains(name)) {
       expenseCategories.add(name);
       notifyListeners();
+      saveData();
     }
   }
 
