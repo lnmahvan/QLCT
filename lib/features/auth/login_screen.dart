@@ -1,35 +1,28 @@
+// Move login_screen.dart here
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'login_screen.dart';
+import '../../main.dart';
+import 'register_screen.dart';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmController = TextEditingController();
   bool _isLoading = false;
 
-  Future<void> _register() async {
+  Future<void> _login() async {
     final username = _usernameController.text.trim();
     final password = _passwordController.text.trim();
-    final confirm = _confirmController.text.trim();
 
-    if (username.isEmpty || password.isEmpty || confirm.isEmpty) {
+    if (username.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Vui lòng nhập đầy đủ thông tin')),
-      );
-      return;
-    }
-
-    if (password != confirm) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Mật khẩu xác nhận không khớp')),
       );
       return;
     }
@@ -38,25 +31,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     final prefs = await SharedPreferences.getInstance();
 
-    // Kiểm tra nếu username đã tồn tại
-    if (prefs.containsKey('user_$username')) {
+    final savedPassword = prefs.getString('user_$username');
+    if (savedPassword == null || savedPassword != password) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tên người dùng đã tồn tại')),
+        const SnackBar(content: Text('Sai tên đăng nhập hoặc mật khẩu')),
       );
       setState(() => _isLoading = false);
       return;
     }
 
-    // Lưu tài khoản mới
-    await prefs.setString('user_$username', password);
+    // Lưu trạng thái đăng nhập
+    await prefs.setString('username', username);
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Đăng ký thành công! Hãy đăng nhập.')),
-      );
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        MaterialPageRoute(
+          builder: (_) => HomePage(
+            onThemeChanged: (value) {},
+            onColorChanged: (color) {},
+            isDarkMode: false,
+            primaryColor: Colors.blue,
+          ),
+        ),
       );
     }
   }
@@ -64,21 +61,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green.shade50,
+      backgroundColor: Colors.blue.shade50,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(30),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.person_add, size: 100, color: Colors.green),
+              const Icon(
+                Icons.account_circle,
+                size: 100,
+                color: Colors.blueAccent,
+              ),
               const SizedBox(height: 20),
               const Text(
-                'Đăng ký tài khoản',
+                'Đăng nhập',
                 style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green),
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
               ),
               const SizedBox(height: 30),
               TextField(
@@ -99,38 +101,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _confirmController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Xác nhận mật khẩu',
-                  prefixIcon: Icon(Icons.lock_outline),
-                  border: OutlineInputBorder(),
-                ),
-              ),
               const SizedBox(height: 30),
               ElevatedButton(
-                onPressed: _isLoading ? null : _register,
+                onPressed: _isLoading ? null : _login,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: Colors.blueAccent,
                   foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 60,
+                    vertical: 15,
+                  ),
                 ),
                 child: _isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Đăng ký'),
+                    : const Text('Đăng nhập'),
               ),
               const SizedBox(height: 15),
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    MaterialPageRoute(builder: (_) => const RegisterScreen()),
                   );
                 },
-                child: const Text('Đã có tài khoản? Đăng nhập'),
+                child: const Text('Chưa có tài khoản? Đăng ký ngay'),
               ),
             ],
           ),

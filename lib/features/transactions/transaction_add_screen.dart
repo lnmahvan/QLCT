@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../models/expense_model.dart';
+import '../../data/models/expense_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import '../models/wallet_model.dart';
 

@@ -1,12 +1,13 @@
+// Move statistics_screen.dart here
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import '../models/expense_model.dart';
-import '../widgets/statistics_chart.dart';
-import '../widgets/statistics_summary.dart';
-import '../widgets/statistics_category_list.dart';
-import '../widgets/statistics_search.dart';
-import 'transaction_list_screen.dart';
+import '../../data/models/expense_model.dart';
+import '../../features/statistics/widgets/statistics_chart.dart';
+import '../../features/statistics/widgets/statistics_summary.dart';
+import '../../features/statistics/widgets/statistics_category_list.dart';
+import '../../features/statistics/widgets/statistics_search.dart';
+import '../transactions/transaction_list_screen.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class StatisticsScreen extends StatefulWidget {

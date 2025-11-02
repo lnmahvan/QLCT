@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../models/expense_model.dart';
+import '../../../data/models/expense_model.dart';
 
 class TransactionSummary extends StatelessWidget {
   final ExpenseModel expense;

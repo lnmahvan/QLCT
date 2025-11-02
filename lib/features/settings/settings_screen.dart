@@ -1,10 +1,11 @@
+// Move settings_screen.dart here
 import 'package:flutter/material.dart';
-import '../widgets/theme_section.dart';
-import '../widgets/language_section.dart';
-import '../widgets/system_section.dart';
-import '../widgets/notification_section.dart';
-import '../widgets/security_section.dart';
-import '../widgets/about_section.dart';
+import '../settings/widgets/theme_section.dart';
+import '../settings/widgets/language_section.dart';
+import '../settings/widgets/system_section.dart';
+import '../settings/widgets/notification_section.dart';
+import '../settings/widgets/security_section.dart';
+import '../settings/widgets/about_section.dart';
 
 class SettingsScreen extends StatefulWidget {
   final void Function(bool) onThemeChanged;

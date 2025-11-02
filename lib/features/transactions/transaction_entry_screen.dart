@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/expense_model.dart';
+import '../../data/models/expense_model.dart';
 
 class TransactionEntryScreen extends StatefulWidget {
   final String type; // 'income' hoặc 'expense'

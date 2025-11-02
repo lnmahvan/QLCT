@@ -1,11 +1,12 @@
+// Move home_screen.dart here
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/expense_model.dart';
-import '../widgets/balance_card.dart';
-import '../widgets/summary_card.dart';
-import '../widgets/recent_transactions_section.dart';
-import 'transaction_add_screen.dart';
-import 'transaction_list_screen.dart';
+import '../../data/models/expense_model.dart';
+import '../../features/home/widgets/balance_card.dart';
+import '../../features/home/widgets/summary_card.dart';
+import '../../features/home/widgets/recent_transactions_section.dart';
+import '../transactions/transaction_add_screen.dart';
+import '../transactions/transaction_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

@@ -1,9 +1,10 @@
+// Move profile_screen.dart here
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/expense_model.dart';
-import 'login_screen.dart';
-import 'settings_screen.dart';
+import '../../data/models/expense_model.dart';
+import '../auth/login_screen.dart';
+import '../settings/settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   final void Function(bool)? onThemeChanged;

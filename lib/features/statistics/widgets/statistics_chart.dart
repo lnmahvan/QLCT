@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import '../../models/expense_model.dart';
+import 'package:fl_chart/fl_chart.dart';
+import '../../../data/models/expense_model.dart';
 
-class StatisticsCategoryList extends StatelessWidget {
+class StatisticsChart extends StatelessWidget {
   final ExpenseModel expense;
   final String selectedChartType;
   final String filter;
   final DateTimeRange? customRange;
   final String searchText;
 
-  const StatisticsCategoryList({
+  const StatisticsChart({
     super.key,
     required this.expense,
     required this.selectedChartType,
@@ -20,9 +20,6 @@ class StatisticsCategoryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formatCurrency =
-        NumberFormat.currency(locale: 'vi_VN', symbol: '₫', decimalDigits: 0);
-
     final now = DateTime.now();
     final filtered = expense.transactions.where((t) {
       bool matchFilter = false;
@@ -66,24 +63,40 @@ class StatisticsCategoryList extends StatelessWidget {
     final currentTotal =
         selectedChartType == 'income' ? totalIncome : totalExpense;
 
-    return ListView(
-      children: currentCategory.entries
-          .map(
-            (e) => ListTile(
-              leading: CircleAvatar(
-                backgroundColor: Colors.primaries[
-                    currentCategory.keys.toList().indexOf(e.key) %
-                        Colors.primaries.length],
-                child: const Icon(Icons.category, color: Colors.white),
-              ),
-              title: Text(e.key),
-              trailing: Text(
-                '${formatCurrency.format(e.value)}  (${(e.value / (currentTotal == 0 ? 1 : currentTotal) * 100).toStringAsFixed(1)}%)',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+    final pieSections = <PieChartSectionData>[];
+    currentCategory.forEach((category, amount) {
+      final percent = (amount / (currentTotal == 0 ? 1 : currentTotal)) * 100;
+      pieSections.add(
+        PieChartSectionData(
+          value: amount,
+          title: '${percent.toStringAsFixed(1)}%',
+          color: Colors.primaries[pieSections.length % Colors.primaries.length],
+          radius: 80,
+          titleStyle: const TextStyle(
+              color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+      );
+    });
+
+    return currentCategory.isNotEmpty
+        ? SizedBox(
+            height: 250,
+            child: PieChart(
+              PieChartData(
+                sections: pieSections,
+                centerSpaceRadius: 40,
+                sectionsSpace: 2,
               ),
             ),
           )
-          .toList(),
-    );
+        : Padding(
+            padding: const EdgeInsets.all(20),
+            child: Text(
+              selectedChartType == 'income'
+                  ? 'Không có dữ liệu thu nhập'
+                  : 'Không có dữ liệu chi tiêu',
+              style: const TextStyle(color: Colors.grey),
+            ),
+          );
   }
 }

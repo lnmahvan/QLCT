@@ -1,8 +1,9 @@
+// Move wallet_screen.dart here
 // lib/screens/wallet_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/expense_model.dart' as expense_model;
-import '../models/wallet_model.dart';
+import '../../data/models/expense_model.dart' as expense_model;
+import '../../data/models/wallet_model.dart';
 import 'package:uuid/uuid.dart';
 
 class WalletScreen extends StatefulWidget {

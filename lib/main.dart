@@ -1,13 +1,14 @@
+// Main entry point of Flutter app
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'models/expense_model.dart';
-import 'screens/home_screen.dart';
-import 'screens/wallet_screen.dart';
-import 'screens/statistics_screen.dart';
-import 'screens/profile_screen.dart';
-import 'screens/login_screen.dart';
-import 'screens/transaction_list_screen.dart';
+import 'data/models/expense_model.dart';
+import 'features/home/home_screen.dart';
+import 'features/wallet/wallet_screen.dart';
+import 'features/statistics/statistics_screen.dart';
+import 'features/profile/profile_screen.dart';
+import 'features/auth/login_screen.dart';
+import 'features/transactions/transaction_list_screen.dart';
 
 void main() {
   runApp(

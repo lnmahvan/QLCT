@@ -1,3 +1,4 @@
+// Move wallet_model.dart here
 class Wallet {
   final String id;
   String name;

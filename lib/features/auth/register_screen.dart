@@ -1,27 +1,36 @@
+// Move register_screen.dart here
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../main.dart';
-import 'register_screen.dart';
+import 'login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmController = TextEditingController();
   bool _isLoading = false;
 
-  Future<void> _login() async {
+  Future<void> _register() async {
     final username = _usernameController.text.trim();
     final password = _passwordController.text.trim();
+    final confirm = _confirmController.text.trim();
 
-    if (username.isEmpty || password.isEmpty) {
+    if (username.isEmpty || password.isEmpty || confirm.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Vui lòng nhập đầy đủ thông tin')),
+      );
+      return;
+    }
+
+    if (password != confirm) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Mật khẩu xác nhận không khớp')),
       );
       return;
     }
@@ -30,29 +39,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final prefs = await SharedPreferences.getInstance();
 
-    final savedPassword = prefs.getString('user_$username');
-    if (savedPassword == null || savedPassword != password) {
+    // Kiểm tra nếu username đã tồn tại
+    if (prefs.containsKey('user_$username')) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sai tên đăng nhập hoặc mật khẩu')),
+        const SnackBar(content: Text('Tên người dùng đã tồn tại')),
       );
       setState(() => _isLoading = false);
       return;
     }
 
-    // Lưu trạng thái đăng nhập
-    await prefs.setString('username', username);
+    // Lưu tài khoản mới
+    await prefs.setString('user_$username', password);
 
     if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Đăng ký thành công! Hãy đăng nhập.')),
+      );
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) => HomePage(
-            onThemeChanged: (value) {},
-            onColorChanged: (color) {},
-            isDarkMode: false,
-            primaryColor: Colors.blue,
-          ),
-        ),
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
       );
     }
   }
@@ -60,26 +65,21 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue.shade50,
+      backgroundColor: Colors.green.shade50,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(30),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.account_circle,
-                size: 100,
-                color: Colors.blueAccent,
-              ),
+              const Icon(Icons.person_add, size: 100, color: Colors.green),
               const SizedBox(height: 20),
               const Text(
-                'Đăng nhập',
+                'Đăng ký tài khoản',
                 style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueAccent,
-                ),
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green),
               ),
               const SizedBox(height: 30),
               TextField(
@@ -100,30 +100,38 @@ class _LoginScreenState extends State<LoginScreen> {
                   border: OutlineInputBorder(),
                 ),
               ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _confirmController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Xác nhận mật khẩu',
+                  prefixIcon: Icon(Icons.lock_outline),
+                  border: OutlineInputBorder(),
+                ),
+              ),
               const SizedBox(height: 30),
               ElevatedButton(
-                onPressed: _isLoading ? null : _login,
+                onPressed: _isLoading ? null : _register,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
+                  backgroundColor: Colors.green,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 60,
-                    vertical: 15,
-                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
                 ),
                 child: _isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Đăng nhập'),
+                    : const Text('Đăng ký'),
               ),
               const SizedBox(height: 15),
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
                   );
                 },
-                child: const Text('Chưa có tài khoản? Đăng ký ngay'),
+                child: const Text('Đã có tài khoản? Đăng nhập'),
               ),
             ],
           ),
