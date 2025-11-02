@@ -35,79 +35,116 @@ class SummaryCard extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Tóm tắt',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        elevation: 4,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: const LinearGradient(
+              colors: [Color(0xFF42A5F5), Color(0xFF64B5F6)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Hôm nay', style: TextStyle(fontSize: 16)),
-                Row(
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Tóm tắt',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '+ ${formatCurrency.format(todayIncome)}',
-                      style: const TextStyle(
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: const [
+                        Icon(Icons.today_rounded, color: Colors.white),
+                        SizedBox(width: 8),
+                        Text('Hôm nay', style: TextStyle(fontSize: 16, color: Colors.white)),
+                      ],
                     ),
-                    const SizedBox(width: 15),
-                    Text(
-                      '- ${formatCurrency.format(todayExpense)}',
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          '+ ${formatCurrency.format(todayIncome)}',
+                          style: const TextStyle(
+                            color: Color(0xFF2E7D32),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Text(
+                          '- ${formatCurrency.format(todayExpense)}',
+                          style: const TextStyle(
+                            color: Color(0xFFC62828),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Tháng này', style: TextStyle(fontSize: 16)),
-                Row(
+              ),
+              const SizedBox(height: 8),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '+ ${formatCurrency.format(monthIncome)}',
-                      style: const TextStyle(
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: const [
+                        Icon(Icons.calendar_month_rounded, color: Colors.white),
+                        SizedBox(width: 8),
+                        Text('Tháng này', style: TextStyle(fontSize: 16, color: Colors.white)),
+                      ],
                     ),
-                    const SizedBox(width: 15),
-                    Text(
-                      '- ${formatCurrency.format(monthExpense)}',
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          '+ ${formatCurrency.format(monthIncome)}',
+                          style: const TextStyle(
+                            color: Color(0xFF2E7D32),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Text(
+                          '- ${formatCurrency.format(monthExpense)}',
+                          style: const TextStyle(
+                            color: Color(0xFFC62828),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

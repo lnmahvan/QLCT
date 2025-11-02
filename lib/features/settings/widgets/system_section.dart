@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SystemSection extends StatelessWidget {
   final VoidCallback onResetData;
@@ -22,8 +23,17 @@ class SystemSection extends StatelessWidget {
             actions: [
               TextButton(onPressed: () => Navigator.pop(context), child: const Text('Hủy')),
               TextButton(
-                onPressed: () {
+                onPressed: () async {
                   Navigator.pop(context);
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.clear();
+                  // Hiển thị SnackBar xác nhận
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('Tất cả dữ liệu đã được xóa. Ứng dụng sẽ khởi động lại.'),
+                      backgroundColor: Colors.red.shade100,
+                    ),
+                  );
                   onResetData();
                 },
                 child: const Text('Xóa', style: TextStyle(color: Colors.red)),

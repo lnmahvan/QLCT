@@ -14,29 +14,51 @@ class BalanceCard extends StatelessWidget {
       decimalDigits: 0,
     );
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        color: Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(15),
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: Column(
-        children: [
-          Text(
-            walletName != null ? 'Số dư (${walletName!})' : 'Số dư hiện tại',
-            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            formatCurrency.format(balance),
-            style: const TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue,
+      elevation: 4,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () {},
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: const LinearGradient(
+              colors: [Color(0xFF3a7bd5), Color(0xFF00d2ff)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
-        ],
+          child: Column(
+            children: [
+              const Icon(
+                Icons.account_balance_wallet_rounded,
+                color: Colors.white,
+                size: 28,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                walletName != null ? 'Số dư (${walletName!})' : 'Số dư hiện tại',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white.withOpacity(0.8),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                formatCurrency.format(balance),
+                style: const TextStyle(
+                  fontSize: 34,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
