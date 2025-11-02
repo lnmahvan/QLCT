@@ -29,67 +29,147 @@ class RecentTransactionsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+          child: Text(
+            '',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                ),
+          ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: recent.isEmpty
-              ? const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Center(
-                    child: Text(
-                      'Chưa có giao dịch nào',
-                      style: TextStyle(color: Colors.grey),
+              ? Card(
+                  elevation: 0,
+                  color: Colors.grey[100],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.receipt_long, color: Colors.grey, size: 38),
+                        SizedBox(height: 10),
+                        Text(
+                          'Chưa có giao dịch nào',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 16,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 )
               : Column(
-                  children: recent.map((t) {
+                  children: List.generate(recent.length, (i) {
+                    final t = recent[i];
                     final color = t.type == 'income'
                         ? Colors.green
                         : Colors.red;
                     final sign = t.type == 'income' ? '+' : '-';
-                    return ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: t.type == 'income'
-                            ? Colors.green.shade100
-                            : Colors.red.shade100,
-                        child: Icon(
-                          t.type == 'income'
-                              ? Icons.arrow_downward
-                              : Icons.arrow_upward,
-                          color: color,
-                        ),
-                      ),
-                      title: Text(
-                        t.category,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (t.note.isNotEmpty)
-                            Text(
-                              t.note,
-                              style: const TextStyle(color: Colors.black87),
+                    // Alternate background color or gradient
+                    final bool isEven = i % 2 == 0;
+                    final cardDecoration = BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: isEven
+                          ? LinearGradient(
+                              colors: [
+                                Colors.blue.withOpacity(0.07),
+                                Colors.white,
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            )
+                          : LinearGradient(
+                              colors: [
+                                Colors.purple.withOpacity(0.05),
+                                Colors.white,
+                              ],
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
                             ),
-                          Text(
-                            DateFormat('dd/MM/yyyy').format(t.date),
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                      trailing: Text(
-                        '$sign ${formatCurrency.format(t.amount)}',
-                        style: TextStyle(
-                          color: color,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        )
+                      ],
                     );
-                  }).toList(),
+                    return Column(
+                      children: [
+                        Container(
+                          decoration: cardDecoration,
+                          child: Card(
+                            elevation: 0,
+                            color: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            margin: EdgeInsets.zero,
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                              leading: CircleAvatar(
+                                backgroundColor: t.type == 'income'
+                                    ? Colors.green.shade100
+                                    : Colors.red.shade100,
+                                child: Icon(
+                                  t.type == 'income'
+                                      ? Icons.arrow_downward
+                                      : Icons.arrow_upward,
+                                  color: color,
+                                ),
+                              ),
+                              title: Text(
+                                t.category,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (t.note.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 2),
+                                      child: Text(
+                                        t.note,
+                                        style: const TextStyle(color: Colors.black87, fontSize: 13),
+                                      ),
+                                    ),
+                                  Text(
+                                    DateFormat('dd/MM/yyyy').format(t.date),
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 12,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              trailing: Text(
+                                '$sign ${formatCurrency.format(t.amount)}',
+                                style: TextStyle(
+                                  color: color,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 17,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (i < recent.length - 1) const SizedBox(height: 8),
+                      ],
+                    );
+                  }),
                 ),
         ),
       ],
