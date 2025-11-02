@@ -6,6 +6,26 @@ class SystemSection extends StatelessWidget {
 
   const SystemSection({super.key, required this.onResetData});
 
+  // Hàm reset dữ liệu mặc định
+  Future<void> _resetData(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    // Đặt dữ liệu mặc định
+    await prefs.setInt('counter', 0); // ví dụ
+    await prefs.setStringList('transactions', []); // ví dụ
+
+    // Hiển thị SnackBar xác nhận
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Tất cả dữ liệu đã được đặt lại mặc định.'),
+        backgroundColor: Colors.green.shade200,
+      ),
+    );
+
+    // Tùy chọn: bạn có thể restart UI bằng cách setState hoặc dùng package restart_app nếu cần
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -19,9 +39,14 @@ class SystemSection extends StatelessWidget {
           context: context,
           builder: (_) => AlertDialog(
             title: const Text('Xác nhận'),
-            content: const Text('Bạn có chắc chắn muốn xóa toàn bộ dữ liệu không?'),
+            content: const Text(
+              'Bạn có chắc chắn muốn xóa toàn bộ dữ liệu không?',
+            ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Hủy')),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Hủy'),
+              ),
               TextButton(
                 onPressed: () async {
                   Navigator.pop(context);
@@ -30,7 +55,9 @@ class SystemSection extends StatelessWidget {
                   // Hiển thị SnackBar xác nhận
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: const Text('Tất cả dữ liệu đã được xóa. Ứng dụng sẽ khởi động lại.'),
+                      content: const Text(
+                        'Tất cả dữ liệu đã được xóa. Ứng dụng sẽ khởi động lại.',
+                      ),
                       backgroundColor: Colors.red.shade100,
                     ),
                   );
