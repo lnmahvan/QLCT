@@ -188,6 +188,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
+          // Biểu đồ đường cho thu/chi theo ngày
           SizedBox(
             height: 250,
             child: LineChart(
@@ -202,20 +203,35 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
-                      reservedSize: 40,
-                      getTitlesWidget: (value, meta) =>
-                          Text(value.toInt().toString()),
+                      reservedSize: 48, // thêm không gian cho số tiền
+                      getTitlesWidget: (value, meta) {
+                        // Rút gọn số tiền: 1k, 1M, ...
+                        String label;
+                        if (value >= 1000000) {
+                          label = '${(value / 1000000).toStringAsFixed(1)}M';
+                        } else if (value >= 1000) {
+                          label = '${(value / 1000).toStringAsFixed(0)}k';
+                        } else {
+                          label = value.toInt().toString();
+                        }
+                        return Text(
+                          label,
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey,
+                          ),
+                        );
+                      },
                     ),
                   ),
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
-                      getTitlesWidget: (value, meta) {
-                        if (value % 5 == 0) {
-                          return Text(value.toInt().toString());
-                        }
-                        return const SizedBox.shrink();
-                      },
+                      interval: 5, // chỉ hiện mỗi 5 ngày 1 nhãn
+                      getTitlesWidget: (value, meta) => Text(
+                        value.toInt().toString(),
+                        style: const TextStyle(fontSize: 10),
+                      ),
                     ),
                   ),
                   topTitles: const AxisTitles(),
@@ -228,6 +244,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     barWidth: 3,
                     spots: incomeSpots,
                     dotData: const FlDotData(show: false),
+                    belowBarData: BarAreaData(
+                      show: true,
+                      color: Colors.green.withOpacity(0.15),
+                    ),
                   ),
                   LineChartBarData(
                     isCurved: true,
@@ -235,12 +255,19 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     barWidth: 3,
                     spots: expenseSpots,
                     dotData: const FlDotData(show: false),
+                    belowBarData: BarAreaData(
+                      show: true,
+                      color: Colors.red.withOpacity(0.15),
+                    ),
                   ),
                 ],
               ),
             ),
           ),
+
           const SizedBox(height: 8),
+
+          // Biểu đồ tròn
           const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
