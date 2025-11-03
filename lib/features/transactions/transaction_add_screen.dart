@@ -14,15 +14,13 @@ class TransactionAddScreen extends StatefulWidget {
 class _TransactionAddScreenState extends State<TransactionAddScreen> {
   List<String> customExpenseCategories = [];
   List<String> customIncomeCategories = [];
-  String selectedWalletId =
-      'wallet_cash'; 
+  String selectedWalletId = 'wallet_cash';
 
   bool isExpense = true;
   String selectedCategory = '';
   DateTime selectedDate = DateTime.now();
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _noteController =
-      TextEditingController(); 
+  final TextEditingController _noteController = TextEditingController();
 
   final expenseCategories = ['Ăn uống', 'Đi lại', 'Quần áo', 'Giải trí'];
   final incomeCategories = ['Lương', 'Thưởng', 'Đầu tư'];
@@ -192,7 +190,7 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
 
     final expense = Provider.of<ExpenseModel>(context, listen: false);
     final double amount = double.tryParse(_amountController.text) ?? 0;
-    final note = _noteController.text.trim(); 
+    final note = _noteController.text.trim();
 
     expense.addTransaction(
       type: isExpense ? 'expense' : 'income',
@@ -268,7 +266,10 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          icon: const Icon(Icons.arrow_upward, color: Colors.white),
+                          icon: const Icon(
+                            Icons.arrow_upward,
+                            color: Colors.white,
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isExpense
                                 ? Colors.redAccent
@@ -298,7 +299,10 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
                       const SizedBox(width: 16),
                       Expanded(
                         child: ElevatedButton.icon(
-                          icon: const Icon(Icons.arrow_downward, color: Colors.white),
+                          icon: const Icon(
+                            Icons.arrow_downward,
+                            color: Colors.white,
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: !isExpense
                                 ? Colors.green
@@ -337,7 +341,9 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
                       ...categories.map((cat) {
                         final selected = cat == selectedCategory;
                         final chipColor = isExpense
-                            ? Colors.redAccent.withOpacity(selected ? 0.85 : 0.18)
+                            ? Colors.redAccent.withOpacity(
+                                selected ? 0.85 : 0.18,
+                              )
                             : Colors.green.withOpacity(selected ? 0.85 : 0.18);
                         return ChoiceChip(
                           label: Text(
@@ -345,8 +351,12 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
                             style: TextStyle(
                               color: selected
                                   ? Colors.white
-                                  : (isExpense ? Colors.redAccent : Colors.green),
-                              fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+                                  : (isExpense
+                                        ? Colors.redAccent
+                                        : Colors.green),
+                              fontWeight: selected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                             ),
                           ),
                           selected: selected,
@@ -361,7 +371,9 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
                             borderRadius: BorderRadius.circular(24),
                             side: BorderSide(
                               color: selected
-                                  ? (isExpense ? Colors.redAccent : Colors.green)
+                                  ? (isExpense
+                                        ? Colors.redAccent
+                                        : Colors.green)
                                   : Colors.transparent,
                               width: 2,
                             ),
@@ -371,20 +383,34 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
                       }).toList(),
                       // Add/Remove custom category buttons
                       ActionChip(
-                        avatar: const Icon(Icons.add, color: Colors.blue, size: 20),
+                        avatar: const Icon(
+                          Icons.add,
+                          color: Colors.blue,
+                          size: 20,
+                        ),
                         label: const Text('Thêm'),
                         backgroundColor: Colors.blue.withOpacity(0.12),
-                        labelStyle: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+                        labelStyle: const TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
                         onPressed: () => _addCustomCategory(context),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24),
                         ),
                       ),
                       ActionChip(
-                        avatar: const Icon(Icons.remove, color: Colors.red, size: 20),
+                        avatar: const Icon(
+                          Icons.remove,
+                          color: Colors.red,
+                          size: 20,
+                        ),
                         label: const Text('Xóa'),
                         backgroundColor: Colors.red.withOpacity(0.12),
-                        labelStyle: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                        labelStyle: const TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
                         onPressed: () => _removeCustomCategory(context),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24),
@@ -401,14 +427,23 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                      leading: const Icon(Icons.calendar_today, color: Colors.blue),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 0,
+                      ),
+                      leading: const Icon(
+                        Icons.calendar_today,
+                        color: Colors.blue,
+                      ),
                       title: Text(
                         'Ngày: ${DateFormat('dd/MM/yyyy').format(selectedDate)}',
                         style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
                       trailing: IconButton(
-                        icon: const Icon(Icons.edit_calendar, color: Colors.blue),
+                        icon: const Icon(
+                          Icons.edit_calendar,
+                          color: Colors.blue,
+                        ),
                         onPressed: _pickDate,
                         tooltip: "Chọn ngày",
                       ),
@@ -430,7 +465,10 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
                       decoration: const InputDecoration(
                         labelText: 'Chọn ví',
                         border: InputBorder.none,
-                        prefixIcon: Icon(Icons.account_balance_wallet_rounded, color: Colors.blue),
+                        prefixIcon: Icon(
+                          Icons.account_balance_wallet_rounded,
+                          color: Colors.blue,
+                        ),
                       ),
                       items: wallets.map((w) {
                         return DropdownMenuItem(
@@ -495,7 +533,10 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
                       decoration: const InputDecoration(
                         hintText: 'Nhập số tiền',
                         border: InputBorder.none,
-                        prefixIcon: Icon(Icons.attach_money, color: Colors.green),
+                        prefixIcon: Icon(
+                          Icons.attach_money,
+                          color: Colors.green,
+                        ),
                         contentPadding: EdgeInsets.symmetric(vertical: 12),
                       ),
                     ),
@@ -516,9 +557,15 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
                         children: [
                           ...List.generate(9, (i) {
                             final num = (i + 1).toString();
-                            return _buildKeyboardButton(num, onPressed: () => _onNumberPressed(num));
+                            return _buildKeyboardButton(
+                              num,
+                              onPressed: () => _onNumberPressed(num),
+                            );
                           }),
-                          _buildKeyboardButton('0', onPressed: () => _onNumberPressed('0')),
+                          _buildKeyboardButton(
+                            '0',
+                            onPressed: () => _onNumberPressed('0'),
+                          ),
                           _buildBackspaceButton(),
                           _buildSaveButton(),
                         ],
@@ -534,18 +581,13 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
     );
   }
 
-
-
-
   // Helper for keyboard buttons
   Widget _buildKeyboardButton(String label, {required VoidCallback onPressed}) {
     return TextButton(
       onPressed: onPressed,
       style: TextButton.styleFrom(
         backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         elevation: 2,
         shadowColor: Colors.black12,
         minimumSize: const Size(30, 30),
@@ -569,20 +611,14 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
       onPressed: _onBackspace,
       style: TextButton.styleFrom(
         backgroundColor: Colors.grey[200],
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         elevation: 2,
         shadowColor: Colors.black12,
         minimumSize: const Size(30, 30),
         padding: EdgeInsets.zero,
       ),
       child: const Center(
-        child: Icon(
-          Icons.backspace_outlined,
-          color: Colors.blueGrey,
-          size: 28,
-        ),
+        child: Icon(Icons.backspace_outlined, color: Colors.blueGrey, size: 28),
       ),
     );
   }
@@ -593,9 +629,7 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF1976D2),
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         elevation: 3,
         minimumSize: const Size(30, 30),
         padding: EdgeInsets.zero,

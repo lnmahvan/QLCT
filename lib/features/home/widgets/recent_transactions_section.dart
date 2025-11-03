@@ -116,6 +116,25 @@ class RecentTransactionsSection extends StatelessWidget {
                             margin: EdgeInsets.zero,
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                              onLongPress: () async {
+                                final confirm = await showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: const Text('Xóa giao dịch'),
+                                    content: const Text('Bạn có chắc muốn xóa giao dịch này không?'),
+                                    actions: [
+                                      TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Hủy')),
+                                      TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Xóa')),
+                                    ],
+                                  ),
+                                );
+                                if (confirm == true) {
+                                  expense.deleteTransaction(t);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Đã xóa giao dịch')),
+                                  );
+                                }
+                              },
                               leading: CircleAvatar(
                                 backgroundColor: t.type == 'income'
                                     ? Colors.green.shade100

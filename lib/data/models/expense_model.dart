@@ -4,12 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class TransactionItem {
-  final String type; 
+  final String type;
   final double amount;
   final String note;
   final String category;
   final DateTime date;
-  final String walletId; 
+  final String walletId;
 
   TransactionItem({
     required this.type,
@@ -30,7 +30,12 @@ class ExpenseModel extends ChangeNotifier {
   final List<Wallet> _wallets = [
     Wallet(id: 'wallet_cash', name: 'Tiền mặt', type: 'cash', balance: 0),
     Wallet(id: 'wallet_debit', name: 'Thẻ tiền', type: 'debit', balance: 0),
-    Wallet(id: 'wallet_credit', name: 'Thẻ tín dụng', type: 'credit', balance: 0),
+    Wallet(
+      id: 'wallet_credit',
+      name: 'Thẻ tín dụng',
+      type: 'credit',
+      balance: 0,
+    ),
   ];
 
   ExpenseModel() {
@@ -40,22 +45,26 @@ class ExpenseModel extends ChangeNotifier {
   Future<void> saveData() async {
     final prefs = await SharedPreferences.getInstance();
     final walletData = _wallets
-        .map((w) => {
-              'id': w.id,
-              'name': w.name,
-              'type': w.type,
-              'balance': w.balance,
-            })
+        .map(
+          (w) => {
+            'id': w.id,
+            'name': w.name,
+            'type': w.type,
+            'balance': w.balance,
+          },
+        )
         .toList();
     final transactionData = _transactions
-        .map((t) => {
-              'type': t.type,
-              'amount': t.amount,
-              'note': t.note,
-              'category': t.category,
-              'date': t.date.toIso8601String(),
-              'walletId': t.walletId,
-            })
+        .map(
+          (t) => {
+            'type': t.type,
+            'amount': t.amount,
+            'note': t.note,
+            'category': t.category,
+            'date': t.date.toIso8601String(),
+            'walletId': t.walletId,
+          },
+        )
         .toList();
 
     await prefs.setString('wallets', jsonEncode(walletData));
@@ -75,26 +84,34 @@ class ExpenseModel extends ChangeNotifier {
       final List<dynamic> walletList = jsonDecode(walletsJson);
       _wallets
         ..clear()
-        ..addAll(walletList.map((w) => Wallet(
+        ..addAll(
+          walletList.map(
+            (w) => Wallet(
               id: w['id'],
               name: w['name'],
               type: w['type'],
               balance: (w['balance'] as num).toDouble(),
-            )));
+            ),
+          ),
+        );
     }
 
     if (transactionsJson != null) {
       final List<dynamic> transactionList = jsonDecode(transactionsJson);
       _transactions
         ..clear()
-        ..addAll(transactionList.map((t) => TransactionItem(
+        ..addAll(
+          transactionList.map(
+            (t) => TransactionItem(
               type: t['type'],
               amount: (t['amount'] as num).toDouble(),
               note: t['note'],
               category: t['category'],
               date: DateTime.parse(t['date']),
               walletId: t['walletId'],
-            )));
+            ),
+          ),
+        );
     }
 
     notifyListeners();
@@ -121,7 +138,13 @@ class ExpenseModel extends ChangeNotifier {
 
   // Danh mục thu / chi mặc định
   List<String> incomeCategories = ['Lương', 'Thưởng', 'Quà tặng', 'Đầu tư'];
-  List<String> expenseCategories = ['Ăn uống', 'Đi lại', 'Mua sắm', 'Hóa đơn', 'Giải trí'];
+  List<String> expenseCategories = [
+    'Ăn uống',
+    'Đi lại',
+    'Mua sắm',
+    'Hóa đơn',
+    'Giải trí',
+  ];
 
   // Getter
   double get income => _income;
@@ -129,14 +152,14 @@ class ExpenseModel extends ChangeNotifier {
   double get balance => _income - _expense;
   List<TransactionItem> get transactions => _transactions;
 
-  //  Thêm giao dịch mới 
+  //  Thêm giao dịch mới
   void addTransaction({
     required String type,
     required double amount,
     String note = '',
     required String category,
     DateTime? date,
-    required String walletId, 
+    required String walletId,
   }) {
     final item = TransactionItem(
       type: type,
@@ -144,7 +167,7 @@ class ExpenseModel extends ChangeNotifier {
       note: note,
       category: category,
       date: date ?? DateTime.now(),
-      walletId: walletId, 
+      walletId: walletId,
     );
 
     _transactions.add(item);
@@ -159,6 +182,19 @@ class ExpenseModel extends ChangeNotifier {
 
     notifyListeners();
     saveData();
+  }
+
+  void deleteTransaction(TransactionItem item) {
+    _transactions.remove(item);
+    if (item.type == 'income') {
+      _income -= item.amount;
+      updateWalletBalance(item.walletId, -item.amount);
+    } else {
+      _expense -= item.amount;
+      updateWalletBalance(item.walletId, item.amount);
+    }
+    saveData();
+    notifyListeners();
   }
 
   //  Thêm danh mục mới
@@ -179,10 +215,7 @@ class ExpenseModel extends ChangeNotifier {
   }
 
   //  Lấy danh sách giao dịch theo điều kiện (loại / danh mục)
-  List<TransactionItem> getTransactions({
-    String? type, 
-    String? category,
-  }) {
+  List<TransactionItem> getTransactions({String? type, String? category}) {
     return _transactions.where((t) {
       bool matchType = type == null || t.type == type;
       bool matchCategory = category == null || t.category == category;
