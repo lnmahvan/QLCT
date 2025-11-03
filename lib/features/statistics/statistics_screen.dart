@@ -1,4 +1,3 @@
-// Move statistics_screen.dart here
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -204,9 +203,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
-                      reservedSize: 48, // thêm không gian cho số tiền
+                      reservedSize: 48,
                       getTitlesWidget: (value, meta) {
-                        // Rút gọn số tiền: 1k, 1M, ...
                         String label;
                         if (value >= 1000000) {
                           label = '${(value / 1000000).toStringAsFixed(1)}M';
@@ -228,7 +226,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
-                      interval: 5, // chỉ hiện mỗi 5 ngày 1 nhãn
+                      interval: 5, 
                       getTitlesWidget: (value, meta) => Text(
                         value.toInt().toString(),
                         style: const TextStyle(fontSize: 10),

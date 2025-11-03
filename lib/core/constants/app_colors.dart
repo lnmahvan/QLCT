@@ -1,1 +1,0 @@
-// Define app colors here

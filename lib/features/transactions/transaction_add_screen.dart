@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/expense_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import '../models/wallet_model.dart';
 
 class TransactionAddScreen extends StatefulWidget {
   const TransactionAddScreen({super.key});
@@ -16,14 +15,14 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
   List<String> customExpenseCategories = [];
   List<String> customIncomeCategories = [];
   String selectedWalletId =
-      'wallet_cash'; // default; sau khi load wallets sẽ điều chỉnh
+      'wallet_cash'; 
 
   bool isExpense = true;
   String selectedCategory = '';
   DateTime selectedDate = DateTime.now();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _noteController =
-      TextEditingController(); // 🆕 thêm dòng này
+      TextEditingController(); 
 
   final expenseCategories = ['Ăn uống', 'Đi lại', 'Quần áo', 'Giải trí'];
   final incomeCategories = ['Lương', 'Thưởng', 'Đầu tư'];
@@ -31,9 +30,9 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
   @override
   void initState() {
     super.initState();
-    _loadCustomCategories(); // Gọi để load danh mục người dùng đã lưu
+    _loadCustomCategories();
 
-    // nếu bạn load wallets trong ExpenseModel async, có thể lấy từ provider sau frame:
+    // Nếu load wallets trong ExpenseModel async, có thể lấy từ provider sau frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final expense = Provider.of<ExpenseModel>(context, listen: false);
       if (expense.wallets.isNotEmpty) {
@@ -182,7 +181,7 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
     );
   }
 
-  // 🆕 hàm lưu giao dịch
+  //  hàm lưu giao dịch
   void _saveTransaction() {
     if (_amountController.text.isEmpty || selectedCategory.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -193,7 +192,7 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
 
     final expense = Provider.of<ExpenseModel>(context, listen: false);
     final double amount = double.tryParse(_amountController.text) ?? 0;
-    final note = _noteController.text.trim(); // 🆕 lấy ghi chú
+    final note = _noteController.text.trim(); 
 
     expense.addTransaction(
       type: isExpense ? 'expense' : 'income',
@@ -201,7 +200,7 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
       category: selectedCategory,
       date: selectedDate,
       note: note,
-      walletId: selectedWalletId, // 🆕 thêm ví được chọn
+      walletId: selectedWalletId,
     );
 
     ScaffoldMessenger.of(
@@ -217,7 +216,7 @@ class _TransactionAddScreenState extends State<TransactionAddScreen> {
       ...(isExpense ? expenseCategories : incomeCategories),
       ...(isExpense ? customExpenseCategories : customIncomeCategories),
     ];
-    final typeColor = isExpense ? Colors.redAccent : Colors.green;
+    // final typeColor = isExpense ? Colors.redAccent : Colors.green;
     final expenseModel = Provider.of<ExpenseModel>(context);
     final wallets = expenseModel.wallets;
 

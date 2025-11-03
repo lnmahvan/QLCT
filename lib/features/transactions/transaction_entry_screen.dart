@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../data/models/expense_model.dart';
 
 class TransactionEntryScreen extends StatefulWidget {
-  final String type; // 'income' hoặc 'expense'
+  final String type; 
   final String category;
 
   const TransactionEntryScreen({super.key, required this.type, required this.category});

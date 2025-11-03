@@ -12,8 +12,8 @@ class SystemSection extends StatelessWidget {
     await prefs.clear();
 
     // Đặt dữ liệu mặc định
-    await prefs.setInt('counter', 0); // ví dụ
-    await prefs.setStringList('transactions', []); // ví dụ
+    await prefs.setInt('counter', 0);
+    await prefs.setStringList('transactions', []);
 
     // Hiển thị SnackBar xác nhận
     ScaffoldMessenger.of(context).showSnackBar(
@@ -23,7 +23,7 @@ class SystemSection extends StatelessWidget {
       ),
     );
 
-    // Tùy chọn: bạn có thể restart UI bằng cách setState hoặc dùng package restart_app nếu cần
+    // Tùy chọn
   }
 
   @override
@@ -61,6 +61,8 @@ class SystemSection extends StatelessWidget {
                       backgroundColor: Colors.red.shade100,
                     ),
                   );
+                    await _resetData(context); 
+
                   onResetData();
                 },
                 child: const Text('Xóa', style: TextStyle(color: Colors.red)),

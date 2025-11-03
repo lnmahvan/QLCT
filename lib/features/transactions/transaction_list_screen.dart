@@ -15,7 +15,7 @@ class TransactionListScreen extends StatefulWidget {
 }
 
 class _TransactionListScreenState extends State<TransactionListScreen> {
-  String _filter = 'all'; // all, today, month, custom
+  String _filter = 'all'; 
   String _searchText = '';
   final _searchController = TextEditingController();
   DateTimeRange? _customRange;
@@ -131,7 +131,7 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
               filter: _filter,
               customRange: _customRange,
               searchText: _searchText,
-              selectedWalletId: widget.selectedWalletId, // 🆕 thêm dòng này
+              selectedWalletId: widget.selectedWalletId, 
             ),
             const SizedBox(height: 8),
             Expanded(
@@ -148,7 +148,7 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
                     filter: _filter,
                     customRange: _customRange,
                     searchText: _searchText,
-                    selectedWalletId: widget.selectedWalletId, // 🆕 thêm dòng này
+                    selectedWalletId: widget.selectedWalletId, 
                     // scrollPhysics: const BouncingScrollPhysics(),
                   ),
                 ),

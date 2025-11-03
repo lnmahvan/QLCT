@@ -1,8 +1,7 @@
-// Move wallet_model.dart here
 class Wallet {
   final String id;
   String name;
-  String type; // 'cash', 'debit', 'credit', ...
+  String type; 
   double balance;
 
   Wallet({

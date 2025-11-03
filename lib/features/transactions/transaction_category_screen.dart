@@ -24,9 +24,9 @@ class _TransactionCategoryScreenState extends State<TransactionCategoryScreen> {
   void _addCategory() {
     final controller = TextEditingController();
     final isIncome = widget.type == 'income';
-    final primaryGradient = isIncome
-        ? LinearGradient(colors: [Colors.green.shade400.withOpacity(0.7), Colors.green.shade700.withOpacity(0.7)])
-        : LinearGradient(colors: [Colors.pink.shade300.withOpacity(0.7), Colors.red.shade400.withOpacity(0.7)]);
+    // final primaryGradient = isIncome
+    //     ? LinearGradient(colors: [Colors.green.shade400.withOpacity(0.7), Colors.green.shade700.withOpacity(0.7)])
+    //     : LinearGradient(colors: [Colors.pink.shade300.withOpacity(0.7), Colors.red.shade400.withOpacity(0.7)]);
     showDialog(
       context: context,
       builder: (_) => AlertDialog(

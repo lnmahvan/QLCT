@@ -1,5 +1,3 @@
-// Move wallet_screen.dart here
-// lib/screens/wallet_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/expense_model.dart' as expense_model;

@@ -1,16 +1,15 @@
-// Move expense_model.dart here
 import 'package:flutter/foundation.dart';
 import 'wallet_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class TransactionItem {
-  final String type; // 'income' hoặc 'expense'
+  final String type; 
   final double amount;
   final String note;
   final String category;
   final DateTime date;
-  final String walletId; // 🆕 thêm walletId
+  final String walletId; 
 
   TransactionItem({
     required this.type,
@@ -18,7 +17,7 @@ class TransactionItem {
     required this.note,
     required this.category,
     required this.date,
-    required this.walletId, // 🆕
+    required this.walletId,
   });
 }
 
@@ -27,7 +26,7 @@ class ExpenseModel extends ChangeNotifier {
   double _expense = 0;
   final List<TransactionItem> _transactions = [];
 
-  // 🔹 Danh sách ví
+  // Danh sách ví
   final List<Wallet> _wallets = [
     Wallet(id: 'wallet_cash', name: 'Tiền mặt', type: 'cash', balance: 0),
     Wallet(id: 'wallet_debit', name: 'Thẻ tiền', type: 'debit', balance: 0),
@@ -130,14 +129,14 @@ class ExpenseModel extends ChangeNotifier {
   double get balance => _income - _expense;
   List<TransactionItem> get transactions => _transactions;
 
-  // 🔹 Thêm giao dịch mới (dùng chung cho cả thu và chi)
+  //  Thêm giao dịch mới 
   void addTransaction({
-    required String type, // 'income' hoặc 'expense'
+    required String type,
     required double amount,
     String note = '',
     required String category,
     DateTime? date,
-    required String walletId, // 🆕 thêm walletId
+    required String walletId, 
   }) {
     final item = TransactionItem(
       type: type,
@@ -145,7 +144,7 @@ class ExpenseModel extends ChangeNotifier {
       note: note,
       category: category,
       date: date ?? DateTime.now(),
-      walletId: walletId, // 🆕
+      walletId: walletId, 
     );
 
     _transactions.add(item);
@@ -162,7 +161,7 @@ class ExpenseModel extends ChangeNotifier {
     saveData();
   }
 
-  // 🔹 Thêm danh mục mới
+  //  Thêm danh mục mới
   void addIncomeCategory(String name) {
     if (!incomeCategories.contains(name)) {
       incomeCategories.add(name);
@@ -179,9 +178,9 @@ class ExpenseModel extends ChangeNotifier {
     }
   }
 
-  // 🔹 Lấy danh sách giao dịch theo điều kiện (loại / danh mục)
+  //  Lấy danh sách giao dịch theo điều kiện (loại / danh mục)
   List<TransactionItem> getTransactions({
-    String? type, // 'income' / 'expense'
+    String? type, 
     String? category,
   }) {
     return _transactions.where((t) {
@@ -191,7 +190,7 @@ class ExpenseModel extends ChangeNotifier {
     }).toList();
   }
 
-  // 🔹 Tính tổng tiền theo loại hoặc danh mục
+  //  Tính tổng tiền theo loại hoặc danh mục
   double totalAmount({String? type, String? category}) {
     final list = getTransactions(type: type, category: category);
     return list.fold(0, (sum, t) => sum + t.amount);
