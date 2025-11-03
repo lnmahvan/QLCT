@@ -15,6 +15,7 @@ class _WalletScreenState extends State<WalletScreen> {
   // dùng riêng cho TẠO ví
   final _createNameCtrl = TextEditingController();
   final _createBalanceCtrl = TextEditingController();
+  String _selectedType = 'cash';
 
   // dùng riêng cho SỬA ví (dialog)
   final _editNameCtrl = TextEditingController();
@@ -47,8 +48,8 @@ class _WalletScreenState extends State<WalletScreen> {
                   colors: w.type == 'cash'
                       ? [Colors.greenAccent, Colors.green]
                       : w.type == 'debit'
-                          ? [Colors.blueAccent, Colors.lightBlue]
-                          : [Colors.deepPurpleAccent, Colors.purple],
+                      ? [Colors.blueAccent, Colors.lightBlue]
+                      : [Colors.deepPurpleAccent, Colors.purple],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -73,8 +74,8 @@ class _WalletScreenState extends State<WalletScreen> {
                           w.type == 'cash'
                               ? Icons.account_balance_wallet
                               : w.type == 'debit'
-                                  ? Icons.credit_card
-                                  : Icons.account_balance,
+                              ? Icons.credit_card
+                              : Icons.account_balance,
                           color: Colors.white,
                           size: 40,
                         ),
@@ -94,8 +95,8 @@ class _WalletScreenState extends State<WalletScreen> {
                               w.type == 'cash'
                                   ? 'Tiền mặt'
                                   : w.type == 'debit'
-                                      ? 'Thẻ tiền'
-                                      : 'Thẻ tín dụng',
+                                  ? 'Thẻ tiền'
+                                  : 'Thẻ tín dụng',
                               style: const TextStyle(color: Colors.white70),
                             ),
                             const SizedBox(height: 8),
@@ -119,7 +120,9 @@ class _WalletScreenState extends State<WalletScreen> {
                           await showModalBottomSheet(
                             context: context,
                             shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(20),
+                              ),
                             ),
                             isScrollControlled: true,
                             builder: (context) {
@@ -127,7 +130,9 @@ class _WalletScreenState extends State<WalletScreen> {
                               _editBalanceCtrl.text = w.balance.toString();
                               return Padding(
                                 padding: EdgeInsets.only(
-                                  bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom +
+                                      20,
                                   left: 20,
                                   right: 20,
                                   top: 20,
@@ -142,14 +147,19 @@ class _WalletScreenState extends State<WalletScreen> {
                                         height: 5,
                                         decoration: BoxDecoration(
                                           color: Colors.grey[300],
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
                                         ),
                                       ),
                                     ),
                                     const SizedBox(height: 16),
                                     const Text(
                                       '✏️ Chỉnh sửa ví',
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     const SizedBox(height: 10),
                                     TextField(
@@ -175,16 +185,23 @@ class _WalletScreenState extends State<WalletScreen> {
                                       width: double.infinity,
                                       child: ElevatedButton.icon(
                                         style: ElevatedButton.styleFrom(
-                                          padding: const EdgeInsets.symmetric(vertical: 14),
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 14,
+                                          ),
                                           backgroundColor: Colors.green,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
                                           ),
                                         ),
                                         onPressed: () {
                                           final oldBalance = w.balance;
                                           final newBalance =
-                                              double.tryParse(_editBalanceCtrl.text) ?? w.balance;
+                                              double.tryParse(
+                                                _editBalanceCtrl.text,
+                                              ) ??
+                                              w.balance;
                                           final delta = newBalance - oldBalance;
 
                                           setState(() {
@@ -192,10 +209,13 @@ class _WalletScreenState extends State<WalletScreen> {
 
                                             if (delta != 0) {
                                               expense.addTransaction(
-                                                type: delta > 0 ? 'income' : 'expense',
+                                                type: delta > 0
+                                                    ? 'income'
+                                                    : 'expense',
                                                 amount: delta.abs(),
                                                 category: 'Điều chỉnh số dư',
-                                                note: 'Cập nhật số dư ví "${w.name}"',
+                                                note:
+                                                    'Cập nhật số dư ví "${w.name}"',
                                                 walletId: w.id,
                                               );
                                             }
@@ -205,10 +225,16 @@ class _WalletScreenState extends State<WalletScreen> {
                                           _editBalanceCtrl.clear();
                                           Navigator.pop(context);
                                         },
-                                        icon: const Icon(Icons.save, color: Colors.white),
+                                        icon: const Icon(
+                                          Icons.save,
+                                          color: Colors.white,
+                                        ),
                                         label: const Text(
                                           'Lưu thay đổi',
-                                          style: TextStyle(fontSize: 16, color: Colors.white),
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -248,7 +274,10 @@ class _WalletScreenState extends State<WalletScreen> {
                       },
                       itemBuilder: (_) => [
                         const PopupMenuItem(value: 'edit', child: Text('Sửa')),
-                        const PopupMenuItem(value: 'delete', child: Text('Xóa')),
+                        const PopupMenuItem(
+                          value: 'delete',
+                          child: Text('Xóa'),
+                        ),
                       ],
                     ),
                   ],
@@ -288,13 +317,18 @@ class _WalletScreenState extends State<WalletScreen> {
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
-                  value: 'cash',
+                  value: _selectedType,
                   items: const [
                     DropdownMenuItem(value: 'cash', child: Text('Tiền mặt')),
                     DropdownMenuItem(value: 'debit', child: Text('Thẻ tiền')),
-                    DropdownMenuItem(value: 'credit', child: Text('Thẻ tín dụng')),
+                    DropdownMenuItem(
+                      value: 'credit',
+                      child: Text('Thẻ tín dụng'),
+                    ),
                   ],
-                  onChanged: (v) {},
+                  onChanged: (v) {
+                    if (v != null) setState(() => _selectedType = v);
+                  },
                   decoration: const InputDecoration(
                     labelText: 'Loại ví',
                     border: OutlineInputBorder(),
@@ -324,10 +358,15 @@ class _WalletScreenState extends State<WalletScreen> {
                     onPressed: () {
                       final id = const Uuid().v4();
                       final name = _createNameCtrl.text.trim();
-                      final type = 'cash';
+                      final type = _selectedType;
                       final bal = double.tryParse(_createBalanceCtrl.text) ?? 0;
                       if (name.isEmpty) return;
-                      final w = Wallet(id: id, name: name, type: type, balance: bal);
+                      final w = Wallet(
+                        id: id,
+                        name: name,
+                        type: type,
+                        balance: bal,
+                      );
                       expense.addWallet(w);
                       _createNameCtrl.clear();
                       _createBalanceCtrl.clear();
@@ -341,7 +380,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
