@@ -63,6 +63,7 @@ class StatisticsChart extends StatelessWidget {
     final currentTotal =
         selectedChartType == 'income' ? totalIncome : totalExpense;
 
+    // Biểu đồ tròn 
     final pieSections = <PieChartSectionData>[];
     currentCategory.forEach((category, amount) {
       final percent = (amount / (currentTotal == 0 ? 1 : currentTotal)) * 100;
